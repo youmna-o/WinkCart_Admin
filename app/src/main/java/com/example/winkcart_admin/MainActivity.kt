@@ -37,24 +37,20 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val viewModel=ProductsViewModel(ProductRepoImpl(
+        /*val viewModel=ProductsViewModel(ProductRepoImpl(
             remoteDataSource = RemoteDataSourceImpl(RetrofitHelper.productService)
-        ))
-        testCRUDOperations(viewModel)
+        ))*/
+        //testCRUDOperations(viewModel)
 
-        //add testing code here(test to add a product,then update it,then add image link to it,then delete the image link from it,then delete the product)
-        //no UI needed,just depend on the logging on the view model
         setContent {
             WinkCart_AdminTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                MainApp()
             }
         }
     }
+
+
+
     //test function that should be deleted .
     //it was created to test the CRUD methods of Product
     //each operation should be done alone since we are not keeping the data
@@ -138,19 +134,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    WinkCart_AdminTheme {
-        Greeting("Android")
-    }
-}

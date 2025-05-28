@@ -2,6 +2,7 @@ package com.example.winkcart_admin.productsScreen
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.winkcart_admin.data.ResponseStatus
 import com.example.winkcart_admin.data.repository.ProductRepo
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class ProductsViewModel(private val productRepo: ProductRepo) : ViewModel() {
 
@@ -109,7 +111,7 @@ class ProductsViewModel(private val productRepo: ProductRepo) : ViewModel() {
         viewModelScope.launch {
             productRepo.addImageToProduct(productId, imageUrl)
                 .catch { throwable ->
-                    if (throwable is retrofit2.HttpException) {
+                    if (throwable is HttpException) {
                         try {
                             val errorResponse = throwable.response()?.errorBody()?.string()
                             Log.e("ProductsViewModel", "Error adding image: $errorResponse")
@@ -139,4 +141,9 @@ class ProductsViewModel(private val productRepo: ProductRepo) : ViewModel() {
         }
     }
 
+}
+class ProductsViewModelFactory(private val repository: ProductRepo) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return ProductsViewModel(productRepo = repository) as T
+    }
 }
