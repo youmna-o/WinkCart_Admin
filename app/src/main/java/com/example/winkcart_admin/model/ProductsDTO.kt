@@ -1,13 +1,16 @@
 package com.example.winkcart_admin.model
 
+import kotlinx.serialization.Serializable
+
 data class ProductListResponse(
-    val products: List<Product>
+    val products: MutableList<Product>
 )
 
 data class SingleProductResponse(
     val product: Product
 )
 
+@Serializable
 data class Product(
     val id: Long,
     val title: String,
@@ -24,7 +27,7 @@ data class Product(
     val options: List<Option>?,
     val images: List<Image>?
 )
-
+@Serializable
 data class Variant(
     val id: Long,
     val product_id: Long,
@@ -40,14 +43,14 @@ data class Variant(
     val inventory_quantity: Int,
     val inventory_item_id: Long
 )
-
+@Serializable
 data class Option(
     val id: Long,
     val product_id: Long,
     val name: String,
     val values: List<String>
 )
-
+@Serializable
 data class Image(
     val id: Long,
     val product_id: Long,
