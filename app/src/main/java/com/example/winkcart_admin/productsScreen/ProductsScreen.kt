@@ -1,6 +1,6 @@
 package com.example.winkcart_admin.productsScreen
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -13,15 +13,25 @@ import com.example.winkcart_admin.productsScreen.components.ProductViewer
 @Composable
 fun ProductsScreen(navHostController: NavHostController, viewModel: ProductsViewModel) {
 
-    val productsResult=viewModel.products.collectAsState()
+    val productsResult=viewModel.filteredProducts.collectAsState()
     Scaffold(
         bottomBar = { BottomNavigationBar(navHostController) }
     ) {innerPadding->
-        //searchbar
 
-        Box(modifier = Modifier.padding(innerPadding)) {
-            ProductViewer(productsResult.value)
+        Column (modifier = Modifier.padding(innerPadding)){
+            ProductViewer(
+                productsResult = productsResult.value,
+                onSearchQueryChanged = { newQuery -> viewModel.onQueryChanged(newQuery) },
+                onSearchFilterChanged = { selectedFilter ->
+                    viewModel.onSelectedFilterChanged(selectedFilter)
+                },
+                onProductDeleteAction = { id->
+                    viewModel.deleteProduct(id)
+                }
+            )
+
         }
+
     }
 
 

@@ -1,5 +1,6 @@
 package com.example.winkcart_admin
 
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
@@ -7,6 +8,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -103,6 +105,7 @@ fun DashboardScreen(navHostController: NavHostController) {
         bottomBar = {BottomNavigationBar(navHostController)}
     ) {padding->
 
+        Button(onClick = {}) { }
         Text(text = "DashBoard Screen", modifier = Modifier.padding(padding))
     }
     

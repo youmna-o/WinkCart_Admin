@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.example.winkcart_admin.model.Product
 
 @Composable
-fun ProductsGrid(products: List<Product>) {
+fun ProductsGrid(products: List<Product>,onProductDeleteAction:(Long)->Unit) {
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -22,7 +22,7 @@ fun ProductsGrid(products: List<Product>) {
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(products) {
-            ProductCard(it)
+            ProductCard(it,onProductDeleteAction)
         }
     }
 }

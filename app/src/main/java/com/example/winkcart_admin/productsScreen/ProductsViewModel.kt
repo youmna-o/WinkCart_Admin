@@ -7,18 +7,48 @@ import androidx.lifecycle.viewModelScope
 import com.example.winkcart_admin.data.ResponseStatus
 import com.example.winkcart_admin.data.repository.ProductRepo
 import com.example.winkcart_admin.model.Product
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
 class ProductsViewModel(private val productRepo: ProductRepo) : ViewModel() {
 
     private val _products=MutableStateFlow<ResponseStatus<List<Product>>>(ResponseStatus.Loading)
-    val products=_products.asStateFlow()
+    private val _searchQuery= MutableStateFlow("")
+    private val _selectedFilter= MutableStateFlow(SearchFilter.BY_NAME)
+    val filteredProducts: StateFlow<ResponseStatus<List<Product>>> = combine(_searchQuery,_products,_selectedFilter)
+    { query,unfilteredProducts,selectedFilter->
+        when(unfilteredProducts){
+            is ResponseStatus.Error -> return@combine ResponseStatus.Error(unfilteredProducts.error)
+            ResponseStatus.Loading -> return@combine ResponseStatus.Loading
+            is ResponseStatus.Success<List<Product>>-> {
+                when(selectedFilter){
+                    SearchFilter.BY_NAME -> {
+                        ResponseStatus.Success(
+                            unfilteredProducts.result.filter {
+                                it.title.contains(query, ignoreCase = true) }
+                        )
+                    }
+                    SearchFilter.BY_ID -> {
+                        ResponseStatus.Success(
+                            unfilteredProducts.result.filter {
+                                it.id.toString().startsWith(query) }
+                        )
+                    }
+                }
+            }
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ResponseStatus.Loading)
 
     private val _singleProduct=MutableStateFlow<ResponseStatus<Product>>(ResponseStatus.Loading)
     val singleProduct=_singleProduct.asStateFlow()
@@ -141,9 +171,21 @@ class ProductsViewModel(private val productRepo: ProductRepo) : ViewModel() {
         }
     }
 
+    fun onQueryChanged(newQuery: String) {
+        _searchQuery.value=newQuery
+    }
+
+    fun onSelectedFilterChanged(selectedFilter: SearchFilter) {
+        _selectedFilter.value=selectedFilter
+        _searchQuery.value=""
+    }
+
 }
 class ProductsViewModelFactory(private val repository: ProductRepo) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return ProductsViewModel(productRepo = repository) as T
     }
+}
+enum class SearchFilter {
+    BY_NAME, BY_ID
 }
