@@ -8,7 +8,7 @@ import com.example.winkcart_admin.model.Product
 import com.example.winkcart_admin.model.SingleProductResponse
 
 class RemoteDataSourceImpl(private val adminServices: AdminServices) :RemoteDataSource{
-    override suspend fun getAllProducts(): List<Product> {
+    override suspend fun getAllProducts(): MutableList<Product> {
         return adminServices.getProducts().products
     }
 

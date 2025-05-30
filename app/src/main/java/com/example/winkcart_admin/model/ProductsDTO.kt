@@ -3,7 +3,7 @@ package com.example.winkcart_admin.model
 import kotlinx.serialization.Serializable
 
 data class ProductListResponse(
-    val products: List<Product>
+    val products: MutableList<Product>
 )
 
 data class SingleProductResponse(

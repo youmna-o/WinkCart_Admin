@@ -1,6 +1,5 @@
 package com.example.winkcart_admin.productsScreen.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -19,14 +18,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import coil.compose.rememberAsyncImagePainter
 import com.example.winkcart_admin.model.Product
+import com.example.winkcart_admin.R
 
 @Composable
-fun ProductCard(product: Product,onDeleteAction:(Long)->Unit) {
+fun ProductCard(product: Product, onDeleteAction: (Long) -> Unit) {
+
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -39,12 +40,14 @@ fun ProductCard(product: Product,onDeleteAction:(Long)->Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AsyncImage(
-                model = product.images?.get(0)?.src,
+                model = product.images?.firstOrNull()?.src,
                 contentDescription = product.title,
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(8.dp)),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                placeholder =painterResource(id = R.drawable.ic_launcher_foreground),
+                error = painterResource(id = R.drawable.errorimg)
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -73,4 +76,5 @@ fun ProductCard(product: Product,onDeleteAction:(Long)->Unit) {
             }
         }
     }
+
 }

@@ -23,7 +23,7 @@ import retrofit2.HttpException
 
 class ProductsViewModel(private val productRepo: ProductRepo) : ViewModel() {
 
-    private val _products=MutableStateFlow<ResponseStatus<List<Product>>>(ResponseStatus.Loading)
+    private val _products=MutableStateFlow<ResponseStatus<MutableList<Product>>>(ResponseStatus.Loading)
     private val _searchQuery= MutableStateFlow("")
     private val _selectedFilter= MutableStateFlow(SearchFilter.BY_NAME)
     val filteredProducts: StateFlow<ResponseStatus<List<Product>>> = combine(_searchQuery,_products,_selectedFilter)
@@ -31,7 +31,7 @@ class ProductsViewModel(private val productRepo: ProductRepo) : ViewModel() {
         when(unfilteredProducts){
             is ResponseStatus.Error -> return@combine ResponseStatus.Error(unfilteredProducts.error)
             ResponseStatus.Loading -> return@combine ResponseStatus.Loading
-            is ResponseStatus.Success<List<Product>>-> {
+            is ResponseStatus.Success<MutableList<Product>>-> {
                 when(selectedFilter){
                     SearchFilter.BY_NAME -> {
                         ResponseStatus.Success(
@@ -129,7 +129,10 @@ class ProductsViewModel(private val productRepo: ProductRepo) : ViewModel() {
                 productRepo.deleteProduct(id)
                 _viewMessage.emit("Product deleted successfully")
                 Log.i("ProductsViewModel", "deleteProduct: Product $id deleted")
-                fetchProducts()
+                (_products.value as? ResponseStatus.Success)?.result?.removeIf { it.id == id }
+                val updatedProducts = (_products.value as ResponseStatus.Success).result
+                _products.value=ResponseStatus.Loading
+                _products.value = ResponseStatus.Success(updatedProducts.toMutableList())
             } catch (ex: Exception) {
                 _viewMessage.emit("Error deleting product: ${ex.message}")
                 Log.e("ProductsViewModel", "deleteProduct: ${ex.message}")

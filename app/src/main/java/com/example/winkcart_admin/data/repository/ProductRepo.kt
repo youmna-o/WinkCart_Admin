@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ProductRepo {
 
-    suspend fun getAllProducts(): Flow<List<Product>>
+    suspend fun getAllProducts(): Flow<MutableList<Product>>
     suspend fun getProductById(id:Long):Flow<Product>
     suspend fun createProduct(createdProduct: Product):Flow<Product>
 

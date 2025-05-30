@@ -10,10 +10,11 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface AdminServices {
     @GET("products.json")
-    suspend fun getProducts():ProductListResponse
+    suspend fun getProducts( @Query("limit") limit: Int = 250):ProductListResponse
     @GET("products/{id}.json")
     suspend fun getProductById(@Path("id") id:Long):SingleProductResponse
     @POST("products.json")

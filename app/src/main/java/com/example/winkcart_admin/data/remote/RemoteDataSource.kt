@@ -12,7 +12,7 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface RemoteDataSource {
-    suspend fun getAllProducts():List<Product>
+    suspend fun getAllProducts():MutableList<Product>
     suspend fun getProductByID(id: Long):Product
     suspend fun createProduct(product:Product):Product
 

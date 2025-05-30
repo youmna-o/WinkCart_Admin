@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
 class ProductRepoImpl (private val remoteDataSource: RemoteDataSource):ProductRepo{
-    override suspend fun getAllProducts(): Flow<List<Product>> = flow {
+    override suspend fun getAllProducts(): Flow<MutableList<Product>> = flow {
         try {
             val products= remoteDataSource.getAllProducts()
             emit(products)
