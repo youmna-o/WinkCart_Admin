@@ -9,8 +9,10 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
+/*
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
@@ -22,7 +24,8 @@ private val LightColorScheme = lightColorScheme(
     secondary = PurpleGrey40,
     tertiary = Pink40
 
-    /* Other default colors to override
+    */
+/* Other default colors to override
     background = Color(0xFFFFFBFE),
     surface = Color(0xFFFFFBFE),
     onPrimary = Color.White,
@@ -30,14 +33,49 @@ private val LightColorScheme = lightColorScheme(
     onTertiary = Color.White,
     onBackground = Color(0xFF1C1B1F),
     onSurface = Color(0xFF1C1B1F),
-    */
+    *//*
+
+)
+*/
+private val DarkColorScheme = darkColorScheme(
+    primary = Rose80,
+    onPrimary = Rose10,
+    primaryContainer = Rose20,
+    onPrimaryContainer = Color.White,
+
+    secondary = Rose60,
+    onSecondary = Rose10,
+    secondaryContainer = Rose20,
+    onSecondaryContainer = Color.White,
+
+    tertiary = Rose40,
+    onTertiary = Color.White
 )
 
+//    primary = Purple80,
+//    secondary = PurpleGrey80,
+//    tertiary = Pink80
+
+
+private val LightColorScheme = lightColorScheme(
+    primary = Rose40,
+    onPrimary = Color.White,
+    primaryContainer = Rose80,
+    onPrimaryContainer = Rose10,
+
+    secondary = Rose20,
+    onSecondary = Color.White,
+    secondaryContainer = Rose80,
+    onSecondaryContainer = Rose10,
+
+    tertiary = Rose60,
+    onTertiary = Color.White
+)
 @Composable
 fun WinkCart_AdminTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

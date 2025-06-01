@@ -1,30 +1,35 @@
 package com.example.winkcart_admin.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 data class ProductListResponse(
-    val products: List<Product>
+    val products: MutableList<Product>
 )
 
 data class SingleProductResponse(
     val product: Product
 )
 
+@Parcelize
 data class Product(
-    val id: Long,
-    val title: String,
-    val body_html: String?,
-    val vendor: String?,
-    val product_type: String?,
-    val created_at: String?,
-    val handle: String?,
-    val updated_at: String?,
-    val published_at: String?,
-    val tags: String?,
-    val status: String?,
-    val variants: List<Variant>?,
-    val options: List<Option>?,
-    val images: List<Image>?
-)
+    var id: Long=0L,
+    var title: String="",
+    var body_html: String? = "",
+    var vendor: String? = "",
+    var product_type: String? = "",
+    var created_at: String? = "",
+    var handle: String? = "",
+    var updated_at: String? = "",
+    var published_at: String? = "",
+    var tags: String? = "",
+    var status: String? = "active",
+    var variants: List<Variant> = listOf(),
+    var options: List<Option> = listOf(),
+    var images: List<Image>? = listOf()
+) : Parcelable
 
+@Parcelize
 data class Variant(
     val id: Long,
     val product_id: Long,
@@ -39,17 +44,17 @@ data class Variant(
     val sku: String?,
     val inventory_quantity: Int,
     val inventory_item_id: Long
-)
-
+):Parcelable
+@Parcelize
 data class Option(
     val id: Long,
     val product_id: Long,
     val name: String,
     val values: List<String>
-)
-
+):Parcelable
+@Parcelize
 data class Image(
-    val id: Long,
-    val product_id: Long,
+    val id: Long?,
+    val product_id: Long?,
     val src: String
-)
+):Parcelable
