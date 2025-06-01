@@ -76,7 +76,7 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             //create then update
             /*viewModel.createProduct(newProduct)
-            viewModel.singleProduct.collect { result ->
+            viewModel.productState.collect { result ->
                 when (result) {
                     is ResponseStatus.Loading -> {
                         Log.d("MainActivity", "Creating product...")
@@ -108,7 +108,7 @@ class MainActivity : ComponentActivity() {
             //deleting image from product
             /*
             viewModel.getProductById(9085607608568)
-            viewModel.singleProduct.collect { result ->
+            viewModel.productState.collect { result ->
                 when (result) {
                     is ResponseStatus.Loading -> {
                         Log.d("MainActivity", "Got product...")

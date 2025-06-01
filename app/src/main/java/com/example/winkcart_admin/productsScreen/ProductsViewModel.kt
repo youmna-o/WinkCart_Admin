@@ -92,25 +92,10 @@ class ProductsViewModel(private val productRepo: ProductRepo) : ViewModel() {
         }
     }
 
-    fun createProduct(createdProduct: Product) {
-        viewModelScope.launch {
-            productRepo.createProduct(createdProduct)
-                .catch {
-                    _viewMessage.emit("Error creating product: ${it.message}")
-                    Log.e("ProductsViewModel", "createProduct: ${it.message}")
-                }
-                .collect { product ->
-                    _singleProduct.value=ResponseStatus.Success(product)
-                    _viewMessage.emit("Product created: ${product.title}")
-                    Log.i("ProductsViewModel", "createProduct: ${product.title} created successfully")
-                    fetchProducts()
-                }
-        }
-    }
     fun updateProduct(id: Long, productUpdated: Product) {
         Log.i("TAG", "updateProduct: begining of update product fun")
         viewModelScope.launch {
-            productRepo.updateProduct(id, productUpdated)
+            productRepo.updateProduct(productUpdated)
                 .catch {
                     _viewMessage.emit("Error updating product: ${it.message}")
                     Log.e("ProductsViewModel", "updateProduct: ${it.message}")

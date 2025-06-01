@@ -12,7 +12,7 @@ interface ProductRepo {
     suspend fun createProduct(createdProduct: Product):Flow<Product>
 
 
-    suspend fun updateProduct(id: Long, productUpdated: Product): Flow<Product>
+    suspend fun updateProduct(productUpdated: Product): Flow<Product>
     suspend fun deleteProduct(id: Long)
 
     suspend fun addImageToProduct(productId: Long, imageURl: String): Flow<ImageData>
