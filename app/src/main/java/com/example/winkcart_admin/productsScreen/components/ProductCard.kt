@@ -1,5 +1,6 @@
 package com.example.winkcart_admin.productsScreen.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -26,7 +27,7 @@ import com.example.winkcart_admin.model.Product
 import com.example.winkcart_admin.R
 
 @Composable
-fun ProductCard(product: Product, onDeleteAction: (Long) -> Unit) {
+fun ProductCard(product: Product, onDeleteAction: (Long) -> Unit,onProductClickAction:(Product)->Unit) {
 
     Card(
         modifier = Modifier
@@ -36,7 +37,9 @@ fun ProductCard(product: Product, onDeleteAction: (Long) -> Unit) {
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier
+                .padding(8.dp)
+                .clickable(onClick = {onProductClickAction(product)}),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AsyncImage(
@@ -46,7 +49,7 @@ fun ProductCard(product: Product, onDeleteAction: (Long) -> Unit) {
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(8.dp)),
                 contentScale = ContentScale.Crop,
-                placeholder =painterResource(id = R.drawable.ic_launcher_foreground),
+                placeholder =painterResource(id = R.drawable.product_placeholder),
                 error = painterResource(id = R.drawable.errorimg)
             )
 

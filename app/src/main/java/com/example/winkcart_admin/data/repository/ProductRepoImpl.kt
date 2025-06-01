@@ -37,10 +37,10 @@ class ProductRepoImpl (private val remoteDataSource: RemoteDataSource):ProductRe
         }
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun updateProduct(id: Long, productUpdated: Product): Flow<Product> = flow{
+    override suspend fun updateProduct(productUpdated: Product): Flow<Product> = flow{
         try {
             if(productUpdated.title.isNotBlank()){
-                val product= remoteDataSource.updateProduct(id,productUpdated)
+                val product= remoteDataSource.updateProduct(productUpdated.id,productUpdated)
                 emit(product)
             }
             else{

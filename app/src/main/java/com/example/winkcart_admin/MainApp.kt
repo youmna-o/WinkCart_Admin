@@ -1,6 +1,6 @@
 package com.example.winkcart_admin
 
-import androidx.compose.foundation.layout.Spacer
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
@@ -27,6 +27,8 @@ import com.example.winkcart_admin.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_admin.data.remote.retrofit.RetrofitHelper
 import com.example.winkcart_admin.data.repository.ProductRepoImpl
 import com.example.winkcart_admin.model.Product
+import com.example.winkcart_admin.productEditScreen.ProductEditScreen
+import com.example.winkcart_admin.productEditScreen.ProductEditViewModelFactory
 import com.example.winkcart_admin.productsScreen.ProductsScreen
 import com.example.winkcart_admin.productsScreen.ProductsViewModelFactory
 
@@ -57,23 +59,32 @@ fun MainApp() {
         composable<Screens.InventoryScr> {
             InventoryScreen(navHostController)
         }
-        /*composable<Screens.ProductDetailsSrc> {
-            val product=it.toRoute<Screens.ProductDetailsSrc>().product
-            ProductDetailsScreen(navHostController,product)
-        }*/
+        composable<Screens.ProductEditSrc> {
+            val product = navHostController.previousBackStackEntry?.savedStateHandle?.get<Product>("product")
+
+            if (product != null) {
+                ProductEditScreen(
+                    navHostController,
+                    viewModel = viewModel(
+                        factory = ProductEditViewModelFactory(
+                            repository = ProductRepoImpl(
+                                remoteDataSource = RemoteDataSourceImpl(
+                                    adminServices = RetrofitHelper.productService
+                                )
+                            ),
+                            product = product
+                        )
+                    )
+                )
+            }
+            else{
+                Log.i("TAG", "MainApp: product is null before opening product details")
+            }
+        }
 
     }
 
 
-}
-
-@Composable
-fun ProductDetailsScreen(navHostController: NavHostController, product: Product) {
-
-    Scaffold{padding->
-
-        Text(text = "Product Details", modifier = Modifier.padding(padding))
-    }
 }
 
 @Composable
