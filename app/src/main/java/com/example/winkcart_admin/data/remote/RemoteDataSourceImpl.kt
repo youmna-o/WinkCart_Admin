@@ -35,4 +35,8 @@ class RemoteDataSourceImpl(private val adminServices: AdminServices) :RemoteData
     override suspend fun deleteImageFromProduct(productId: Long, imageId: Long) {
         return adminServices.deleteImageFromProduct(productId, imageId)
     }
+
+    override suspend fun deleteProductVariant(productId: Long, variantId: Long) {
+        return adminServices.deleteProductVariant(productId,variantId)
+    }
 }

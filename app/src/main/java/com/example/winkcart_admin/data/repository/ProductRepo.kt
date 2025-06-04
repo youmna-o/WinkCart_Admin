@@ -18,4 +18,5 @@ interface ProductRepo {
     suspend fun addImageToProduct(productId: Long, imageURl: String): Flow<ImageData>
 
     suspend fun deleteImageFromProduct(productId: Long, imageId: Long)
+    suspend fun deleteVariant(productId: Long, variantId: Long)
 }

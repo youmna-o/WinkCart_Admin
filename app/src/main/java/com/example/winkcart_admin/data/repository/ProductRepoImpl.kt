@@ -76,4 +76,8 @@ class ProductRepoImpl (private val remoteDataSource: RemoteDataSource):ProductRe
         }
     }
 
+    override suspend fun deleteVariant(productId: Long, variantId: Long) {
+        remoteDataSource.deleteProductVariant(productId,variantId)
+    }
+
 }
