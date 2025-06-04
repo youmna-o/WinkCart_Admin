@@ -1,6 +1,7 @@
 package com.example.winkcart_admin.productsScreen
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -56,7 +57,6 @@ class ProductsViewModel(private val productRepo: ProductRepo) : ViewModel() {
 
     private val _viewMessage = MutableSharedFlow<String>()
     val viewMessage = _viewMessage.asSharedFlow()
-
     init {
         fetchProducts()
     }
@@ -67,47 +67,17 @@ class ProductsViewModel(private val productRepo: ProductRepo) : ViewModel() {
                 .catch {
                     _viewMessage.emit("UnexpectedError:  ${it.message}")
                     _products.value=ResponseStatus.Error(it)
-                    Log.i("TAG", "fetchProducts: ${it.message}")
+                    Log.i("Fetch", "fetchProducts: ${it.message}")
                 }
                 .collect{
                     _products.value=ResponseStatus.Success(it)
-                    Log.i("TAG", "fetchProducts: "+it[0])
+                    Log.i("Fetch", "fetchProducts: "+it[0])
                 }
-
         }
 
     }
-    fun getProductById(id: Long) {
-        viewModelScope.launch {
-            productRepo.getProductById(id)
-                .catch {
-                    _viewMessage.emit("Error getting product by id: ${it.message}")
-                    Log.e("ProductsViewModel", "getProductById: ${it.message}")
-                }
-                .collect { product ->
-                    _singleProduct.value=ResponseStatus.Success(product)
-                    _viewMessage.emit("getProductById: ${product.title}")
-                    Log.i("ProductsViewModel", "getProductById: ${product.title} got Sucessfully")
-                }
-        }
-    }
 
-    fun updateProduct(id: Long, productUpdated: Product) {
-        Log.i("TAG", "updateProduct: begining of update product fun")
-        viewModelScope.launch {
-            productRepo.updateProduct(productUpdated)
-                .catch {
-                    _viewMessage.emit("Error updating product: ${it.message}")
-                    Log.e("ProductsViewModel", "updateProduct: ${it.message}")
-                }
-                .collect { product ->
-                    _singleProduct.value=ResponseStatus.Success(product)
-                    _viewMessage.emit("Product updated: ${product.title}")
-                    Log.i("ProductsViewModel", "updateProduct: ${product.id} updated successfully")
-                    fetchProducts()
-                }
-        }
-    }
+
     fun deleteProduct(id: Long) {
         viewModelScope.launch {
             try {
@@ -125,40 +95,6 @@ class ProductsViewModel(private val productRepo: ProductRepo) : ViewModel() {
         }
     }
 
-    fun addImageToProduct(productId: Long, imageUrl: String) {
-        viewModelScope.launch {
-            productRepo.addImageToProduct(productId, imageUrl)
-                .catch { throwable ->
-                    if (throwable is HttpException) {
-                        try {
-                            val errorResponse = throwable.response()?.errorBody()?.string()
-                            Log.e("ProductsViewModel", "Error adding image: $errorResponse")
-                        } catch (e: Exception) {
-                            Log.e("ProductsViewModel", "Error parsing error response: ${e.message}")
-                        }
-                    }
-                    _viewMessage.emit("Error adding image: ${throwable.message}")
-                }
-                .collect { imageData ->
-                    _viewMessage.emit("Image added to product: ${imageData.src}")
-                    Log.i("ProductsViewModel", "addImageToProduct: Image added with URL: ${imageData.src}")
-                }
-        }
-    }
-
-    fun deleteImageFromProduct(productId: Long, imageId: Long) {
-        viewModelScope.launch {
-            try {
-                productRepo.deleteImageFromProduct(productId, imageId)
-                _viewMessage.emit("Image deleted from product")
-                Log.i("ProductsViewModel", "deleteImageFromProduct: Image $imageId deleted")
-            } catch (ex: Exception) {
-                _viewMessage.emit("Error deleting image: ${ex.message}")
-                Log.e("ProductsViewModel", "deleteImageFromProduct: ${ex.message}")
-            }
-        }
-    }
-
     fun onQueryChanged(newQuery: String) {
         _searchQuery.value=newQuery
     }
@@ -167,7 +103,6 @@ class ProductsViewModel(private val productRepo: ProductRepo) : ViewModel() {
         _selectedFilter.value=selectedFilter
         _searchQuery.value=""
     }
-
 }
 class ProductsViewModelFactory(private val repository: ProductRepo) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

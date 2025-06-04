@@ -1,25 +1,29 @@
 package com.example.winkcart_admin.productEditScreen
 
+import android.annotation.SuppressLint
 import android.util.Log
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -28,100 +32,94 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
-import com.example.winkcart_admin.R
 import com.example.winkcart_admin.data.ResponseStatus
 import com.example.winkcart_admin.model.Image
+import com.example.winkcart_admin.model.Option
 import com.example.winkcart_admin.model.Product
+import com.example.winkcart_admin.model.Variant
+import com.example.winkcart_admin.productEditScreen.components.ImageSection
+import com.example.winkcart_admin.productEditScreen.components.ProductFieldSection
+import com.example.winkcart_admin.productEditScreen.components.ProductOptionsSection
 import com.example.winkcart_admin.productsScreen.components.AdminAlert
 
+
+
+@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun ProductEditScreen(navHostController: NavHostController,viewModel: ProductEditViewModel) {
 
     val productState by viewModel.productState.collectAsState()
     val scrollState = rememberScrollState()
     var isNewProduct by remember { mutableStateOf(false) }
-    var showAlert by remember { mutableStateOf(false) }
-    var productID by remember { mutableStateOf("Product ID will be generated automatically") }
-    var productTitle by remember { mutableStateOf("") }
-    var productType by remember { mutableStateOf("") }
-    var productTags by remember { mutableStateOf("") }
-    var productVendor by remember { mutableStateOf("") }
-    var productDescription by remember { mutableStateOf("") }
-    var productPrice by remember { mutableDoubleStateOf(0.0) }
+    var isTitleErrorAlert by remember { mutableStateOf(false) }
+    var modifiedProduct by remember { mutableStateOf(Product()) }
+
     val productImages = remember { mutableStateListOf<String>() }
-    var productImageLink by remember { mutableStateOf("") }
-
-    /*    var productTitle by remember { mutableStateOf(if (isNewProduct) "" else product.title) }
-        var productType by remember { mutableStateOf(if (isNewProduct) "" else product.product_type ?: "") }
-        var productTags by remember { mutableStateOf(if (isNewProduct) "" else product.tags ?: "") }
-        var productVendor by remember { mutableStateOf(if (isNewProduct) "" else product.vendor ?: "") }
-        var productDescription by remember { mutableStateOf(if (isNewProduct) "" else product.body_html ?: "") }
-        val productImages = remember { mutableStateListOf(*(product.images?.map { it.src?: "" } ?: listOf()).toTypedArray()) }
-        var productImageLink by remember { mutableStateOf("") }*/
-
+    val productOptionsMap = remember {
+        mutableStateMapOf<String, SnapshotStateList<String>>()
+    }
+    var confirmOptionDeleteShowAlert by remember { mutableStateOf(false) }
+    var confirmOptionValueDeleteShowAlert by remember { mutableStateOf(false) }
+    var optionSelectedToDelete by remember { mutableStateOf("") }
+    var optionValueSelectedToDelete by remember { mutableStateOf("") }
+    BackHandler {
+        navHostController.previousBackStackEntry?.savedStateHandle?.set("shouldRefresh", true)
+        navHostController.popBackStack()
+    }
     LaunchedEffect(productState) {
-        when (productState) {
+        when (val state = productState) {
             is ResponseStatus.Success -> {
-                val updatedProduct = (productState as ResponseStatus.Success).result
+                val updatedProduct = state.result
+                isNewProduct = updatedProduct.id == 0L
+                modifiedProduct = updatedProduct
 
-                isNewProduct= updatedProduct.id== 0L
-                productID = if(isNewProduct){
-                    "Product ID will be generated automatically"
-                } else{
-                    updatedProduct.id.toString()
-                }
-                productTitle = updatedProduct.title
-                productTags = updatedProduct.tags ?: ""
-                productType = updatedProduct.product_type ?: ""
-                productDescription = updatedProduct.body_html ?: ""
-                productVendor = updatedProduct.vendor ?: ""
                 productImages.clear()
                 productImages.addAll(updatedProduct.images?.map { it.src  } ?: listOf())
+
+                productOptionsMap.clear()
+                updatedProduct.options.forEach {
+                    productOptionsMap[it.name] = it.values.toMutableStateList()
+                }
+
             }
             is ResponseStatus.Error -> {
-                // Handle error state, e.g., show an error message
+
                 Log.e("ProductEdit", "Error: ${(productState as ResponseStatus.Error).error}")
             }
-            else -> { /* Loading state, no action needed */ }
+            else -> {  }
         }
     }
-    //var productTitle by remember { mutableStateOf(product.) }
     Scaffold { padding ->
-        Log.i("TAG", "ProductEditScreen: ${productID}")
         Column(
             modifier = Modifier
                 .padding(padding)
                 .verticalScroll(scrollState)
         ) {
-            LazyRow(Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-                .height(200.dp)) {
-                items(items = productImages){ image ->
-                    ImageCard(
-                        imageSrc = image,
-                        onDeleteImageAction = {
-                            productImages.remove(image)
-                        }
-                    )
-                }
-            }
+            ImageSection(
+                productImages = productImages,
+                onDeleteImageAction = { productImages.remove(it) },
+                onAddImageAction = { productImages.add(it) },
+            )
             TextField(
-                value = productID,
+                value = if (isNewProduct) "Product ID will be generated automatically" else modifiedProduct.id.toString(),
                 onValueChange = {},
                 readOnly = true,
                 label = { Text("ID")},
@@ -129,173 +127,305 @@ fun ProductEditScreen(navHostController: NavHostController,viewModel: ProductEdi
                     .padding(12.dp)
                     .fillMaxWidth()
             )
-            OutlinedTextField(
-                value =productImageLink,
-                onValueChange = {
-                    productImageLink=it
-                },
-                label = { Text("Image URL")},
-                modifier = Modifier
-                    .padding(12.dp)
-                    .fillMaxWidth(),
-                trailingIcon = {
-                    IconButton(
-                        content = {
-                            Icon(Icons.Default.Add, contentDescription = "Adding Icon")
-                        },
-                        onClick ={
-                            productImages.add(productImageLink)
-                        }
+
+            ProductFieldSection(
+                product = modifiedProduct,
+                onProductChange = { modifiedProduct = it }
+            )
+
+            ProductOptionsSection(
+                productOptionsMap = productOptionsMap,
+                onAddOptionAction = { optionName ->
+                    productOptionsMap[optionName] = mutableStateListOf()
+                    val newOption = Option(
+                        id = 0,
+                        product_id =0,
+                        name = optionName,
+                        values = listOf()
+                    )
+                    modifiedProduct = modifiedProduct.copy(
+                        options = modifiedProduct.options + newOption
                     )
                 },
-                singleLine = true
-            )
-            OutlinedTextField(
-                value =productTitle,
-                onValueChange = {
-                    productTitle=it
-                },
-                label = { Text("Title")},
-                modifier = Modifier
-                    .padding(12.dp)
-                    .fillMaxWidth()
-            )
-            OutlinedTextField(
-                value =productType,
-                onValueChange = {
-                    productType=it
-                },
-                label = { Text("Type")},
-                modifier = Modifier
-                    .padding(12.dp)
-                    .fillMaxWidth()
-            )
-            OutlinedTextField(
-                value =productTags,
-                onValueChange = {
-                    productTags=it
-                },
-                label = { Text("Tags")},
-                modifier = Modifier
-                    .padding(12.dp)
-                    .fillMaxWidth()
-            )
-            OutlinedTextField(
-                value =productVendor,
-                onValueChange = {
-                    productVendor=it
-                },
-                label = { Text("Vendor")},
-                modifier = Modifier
-                    .padding(12.dp)
-                    .fillMaxWidth()
-            )
-            OutlinedTextField(
-                value =productDescription,
-                onValueChange = {
-                    productDescription=it
-                },
-                label = { Text("Description")},
-                modifier = Modifier
-                    .padding(12.dp)
-                    .fillMaxWidth(),
-            )
-            /*OutlinedTextField(
-                value =productPrice.toString(),
-                onValueChange = {
-                    productPrice=it.toDouble()
-                },
-                label = { Text("Price")},
-                modifier = Modifier
-                    .padding(12.dp)
-                    .fillMaxWidth(),
-            )*/
-            Button(onClick = {
-                if(productTitle.isNotBlank()){
-                    val product =if(isNewProduct) {
-                        Product()
-                    }else{
-                        (productState as ResponseStatus.Success).result
-                    }
-                    product.title=productTitle
-                    product.tags=productTags
-                    product.product_type=productType
-                    product.body_html=productDescription
-                    product.vendor=productVendor
-                    //product.
-                    if(isNewProduct){
-                        product.images= productImages.toList().map {
-                            Image(
-                                src = it,
-                                id = null,
-                                product_id = null
-                            )
-                        }
-                        viewModel.createProduct(product)
-                    }else{
-                        viewModel.editProduct(product,productImages.toList())
-                    }
-                }
-                else{
-                    showAlert=true
-                }
+                isOptionFieldEnabled = { productOptionsMap.size < 3 },
+                onAddValueToOptionAction = { optionValue, selectedOption ->
+                    productOptionsMap[selectedOption]?.add(optionValue)
 
+                },
+                onDeleteOptionAction = {
+                    optionSelectedToDelete = it
+                    confirmOptionDeleteShowAlert = true
+                },
+                onDeleteValueToOptionAction = { optionValue, selectedOption ->
+                    optionSelectedToDelete=selectedOption
+                    optionValueSelectedToDelete=optionValue
+                    confirmOptionValueDeleteShowAlert=true
+                },
+            )
+            ProductVariantsSection(
+                modifiedProduct = modifiedProduct,
+                productOptionsMap = productOptionsMap,
+                onProductChange = {
+                    modifiedProduct = it
+                }
+            )
+
+
+
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                onClick = {
+                if(modifiedProduct.title.isBlank()) {
+                    isTitleErrorAlert = true
+                    return@Button
+                }
+                val options = productOptionsMap.map { (key, values) ->
+                    if(values.isEmpty()){
+                        return@Button
+                    }
+                    Option(0, modifiedProduct.id, key, values.toList())
+                }
+                val finalProduct = modifiedProduct.copy(
+                    options = options,
+                    images = productImages.map { Image(null, null, it) }
+                )
+                if (isNewProduct) {
+                    viewModel.createProduct(finalProduct)
+                } else {
+                    viewModel.editProduct(finalProduct)
+                }
             }) {
-                Text(text = if(isNewProduct){
-                    "Add Product"
-                }else{
-                    "Modify Product"
-                })
+                Text(if (isNewProduct) "Add Product" else "Modify Product")
             }
         }
-        if (showAlert){
+        if (isTitleErrorAlert){
             AdminAlert(
                 title = "Missing Title",
                 message = "Products Must have a title",
                 confirmMessage = "Confirm",
-                onDismissAction = { showAlert=false },
-                onConfirmAction = { showAlert=false }
+                onDismissAction = { isTitleErrorAlert=false },
+                onConfirmAction = { isTitleErrorAlert=false }
+            )
+        }
+
+        if (confirmOptionDeleteShowAlert){
+            AdminAlert(
+                title = "Delete Option",
+                message = "Are you Sure You want to Delete the Option With its Variants",
+                confirmMessage = "Confirm",
+                onDismissAction = { confirmOptionDeleteShowAlert=false },
+                onConfirmAction = {
+                    productOptionsMap.remove(optionSelectedToDelete)
+                    val optionIndex = modifiedProduct.options.indexOfFirst { it.name == optionSelectedToDelete }
+                    if (optionIndex in 0..2) {
+                        val updatedVariants = modifiedProduct.variants.map { variant ->
+                            when (optionIndex) {
+                                0 -> variant.copy(option1 = null)
+                                1 -> variant.copy(option2 = null)
+                                2 -> variant.copy(option3 = null)
+                                else -> variant
+                            }
+                        }
+                        val updatedOptions = modifiedProduct.options.filter { it.name != optionSelectedToDelete }
+                        modifiedProduct = modifiedProduct.copy(
+                            variants = updatedVariants,
+                            options = updatedOptions
+                        )
+                    }
+
+                    confirmOptionDeleteShowAlert = false
+                }
+
+            )
+        }
+        if (confirmOptionValueDeleteShowAlert){
+            AdminAlert(
+                title = "Delete Option Value",
+                message = "Are you Sure You want to Delete \"${optionValueSelectedToDelete}\" for option \"${optionSelectedToDelete}\"",
+                confirmMessage = "Confirm",
+                onDismissAction = { confirmOptionValueDeleteShowAlert=false },
+                onConfirmAction = {
+                    productOptionsMap[optionSelectedToDelete]?.remove(optionValueSelectedToDelete)
+
+                    confirmOptionValueDeleteShowAlert=false
+                }
             )
         }
     }
 }
 
 @Composable
-fun ImageCard(imageSrc: String,onDeleteImageAction:()->Unit) {
+fun ProductVariantsSection(
+    modifiedProduct: Product,
+    productOptionsMap: SnapshotStateMap<String, SnapshotStateList<String>>,
+    onProductChange: (Product) -> Unit
+) {
+    var variantList = modifiedProduct.variants.toMutableList()
+    val isOptionExpanded = remember { mutableStateMapOf<String, Boolean>() }
+
+    SideEffect {
+        productOptionsMap.keys.forEach { key ->
+            modifiedProduct.variants.forEachIndexed { index, _ ->
+                val mapKey = "$index-$key"
+                if (mapKey !in isOptionExpanded) {
+                    isOptionExpanded[mapKey] = false
+                }
+            }
+        }
+    }
+
 
     Card(
-        modifier =Modifier
-            .padding(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp),
+        shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        shape = RoundedCornerShape(12.dp)
+        border = BorderStroke(width = 2.dp, color = Color.Black)
     ) {
-
-        Box(modifier = Modifier.fillMaxWidth()
-        ) {
-            AsyncImage(
-                model = imageSrc,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .clip(RoundedCornerShape(8.dp)),
-                contentDescription = "product Image",
-                error = painterResource(R.drawable.errorimg),
-                placeholder = painterResource(R.drawable.product_placeholder)
-            )
-            FloatingActionButton(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(8.dp)
-                    .size(40.dp),
-                onClick = {
-                    onDeleteImageAction()
-                }
-            ) {
+        Row (modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.SpaceBetween){
+            Text(text = "Variants:", modifier = Modifier.padding(12.dp))
+            IconButton(onClick = {
+                val newVariant = Variant(
+                    id =0,
+                    product_id = modifiedProduct.id,
+                    title = "default",
+                    price = "0",
+                    position = modifiedProduct.variants.size + 1,
+                    inventory_policy = "deny",
+                    compare_at_price = null,
+                    option1 = null,
+                    option2 = null,
+                    option3 = null,
+                    sku = null,
+                    inventory_quantity = 0,
+                    inventory_item_id = 0
+                )
+                onProductChange(modifiedProduct.copy(variants = modifiedProduct.variants + newVariant))
+            }) {
                 Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete Product"
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add Variant"
                 )
             }
         }
 
+        modifiedProduct.variants.forEachIndexed { index, variant ->
+            var isWarningDisplayed by remember { mutableStateOf(false) }
+            Row{
+                Text(text = "Variant ${index + 1}:", modifier = Modifier.padding(4.dp), fontSize = 14.sp)
+                if(isWarningDisplayed){
+                    Text(text="You have to select value For each Option", color = Color.Red, fontSize = 14.sp)
+                }
+
+            }
+
+            Row {
+                OutlinedTextField(
+                    value = variant.title,
+                    onValueChange = {
+                        variantList[index] = variant.copy(title = it)
+                        onProductChange(modifiedProduct.copy(variants = variantList))
+                    },
+                    label = { Text("Title") },
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .weight(2f),
+                    singleLine = true
+                )
+                OutlinedTextField(
+                    value = variant.price,
+                    onValueChange = {
+                        variantList[index] = variant.copy(price = it)
+                        onProductChange(modifiedProduct.copy(variants = variantList))
+                    },
+                    label = { Text("Price") },
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .weight(1f),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+                OutlinedTextField(
+                    value = variant.inventory_quantity.toString(),
+                    onValueChange = {
+                        variantList[index] = variant.copy(inventory_quantity = it.toIntOrNull() ?: 0)
+                        onProductChange(modifiedProduct.copy(variants = variantList))
+                    },
+                    label = { Text("Quantity") },
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .weight(1f),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+            }
+
+            Row(modifier = Modifier.padding(12.dp)) {
+                productOptionsMap.keys.forEachIndexed { optIndex, key ->
+                    val mapKey = "$index-$key"
+                    val optionValue = when (optIndex) {
+                        0 -> variant.option1
+                        1 -> variant.option2
+                        2 -> variant.option3
+                        else -> null
+
+                    }
+
+                    val displayText = if (!optionValue.isNullOrBlank()) {
+                        optionValue
+                    } else {
+                        key
+                    }
+                    isWarningDisplayed = displayText==key
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable {
+
+                                isOptionExpanded[mapKey] = !(isOptionExpanded[mapKey] ?: false)
+
+                            }
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            Text(text = displayText)
+                            Icon(
+                                imageVector = Icons.Default.ArrowDropDown,
+                                contentDescription = "Dropdown",
+                                modifier = Modifier.padding(start = 4.dp)
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = isOptionExpanded[mapKey] ?: false,
+                            onDismissRequest = { isOptionExpanded[mapKey] = false }
+                        ) {
+                            productOptionsMap[key]?.forEach { option ->
+                                DropdownMenuItem(
+                                    onClick = {
+                                        val updatedVariant = when (optIndex) {
+                                            0 -> variant.copy(option1 = option)
+                                            1 -> variant.copy(option2 = option)
+                                            2 -> variant.copy(option3 = option)
+                                            else -> variant
+                                        }
+                                        variantList[index] = updatedVariant
+
+                                        onProductChange(modifiedProduct.copy(variants = variantList))
+
+                                        isOptionExpanded[mapKey] = false
+                                    },
+                                    text = { Text(option) }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -28,7 +28,7 @@ class ProductEditViewModel(private val productRepo: ProductRepo, product: Produc
         _productState.value=ResponseStatus.Loading
         viewModelScope.launch {
 
-            Log.i("TAG", "createProductt: ${createdProduct}")
+            Log.i("TAG", "createProductbeofore: ${createdProduct}")
             productRepo.createProduct(createdProduct)
                 .catch {
                     _viewMessage.emit("Error creating product: ${it.message}")
@@ -48,35 +48,56 @@ class ProductEditViewModel(private val productRepo: ProductRepo, product: Produc
                 }
         }
     }
-    fun editProduct(updatedProduct: Product, editedImageList: List<String>) {
-        _productState.value = ResponseStatus.Loading
-
-        val originalImagesSet = updatedProduct.images?.map { it.src }?.toSet() ?: emptySet()
-        val editedImagesSet = editedImageList.toSet()
-
-        val addedImages = editedImagesSet - originalImagesSet
-        val removedImages = originalImagesSet - editedImagesSet
-
-        val srcToIdMap = updatedProduct.images?.associate { it.src to it.id } ?: emptyMap()
-        Log.i("TAG", "editProduct: $addedImages")
-        Log.i("ProductEditViewModel", "product Before update: ${updatedProduct}")
+    fun editProduct(updatedProduct: Product) {
+        val currentState = _productState.value
+        if (currentState !is ResponseStatus.Success) {
+            viewModelScope.launch {
+                _viewMessage.emit("Cannot update product: product not loaded.")
+            }
+            return
+        }
+        val originalProduct = currentState.result
+        Log.i("TAG", "editProduct:original product:${originalProduct} ")
+        Log.i("TAG", "editProduct:updated product before sending:${updatedProduct} ")
+        val originalImages = originalProduct.images ?: emptyList()
+        val originalImageSrcSet = originalImages.map { it.src }.toSet()
+        val finalImageSrcSet = updatedProduct.images?.map { it.src }?.toSet() ?: setOf()
+        val removedImages = originalImageSrcSet - finalImageSrcSet
+        val srcToIdMap = originalImages.associateBy({ it.src }, { it.id })
+        val oldVariantIds = originalProduct.variants.map { it.id }
         viewModelScope.launch {
+            _productState.value = ResponseStatus.Loading
             try {
-                productRepo.updateProduct(updatedProduct).
-                    catch {
-                        _viewMessage.emit("Error updating product: ${it.message}")
-                        Log.e("ProductEditViewModel", "Edit Product: ${it.message}")
+                oldVariantIds.forEach { variantId ->
+                    try {
+                        productRepo.deleteVariant(updatedProduct.id, variantId?:0)
+                    } catch (e: Exception) {
+                        if (e is HttpException) {
+                            try {
+                                val errorResponse = e.response()?.errorBody()?.string()
+                                Log.e("TAG", "Error deleting variant: $errorResponse")
+                            } catch (e: Exception) {
+                                Log.e("TAG", "Error parsing error response: ${e.message}")
+                            }
+                        }
+                        Log.e("ProductEditViewModel", "Failed to delete variant $variantId: ${e.message}")
+                    }
+                }
+                updatedProduct.variants.forEach { it.id=null }
+                productRepo.updateProduct(updatedProduct)
+                    .catch { throwable ->
+                        if (throwable is HttpException) {
+                            try {
+                                val errorResponse = throwable.response()?.errorBody()?.string()
+                                Log.e("TAG", "Error updating product: $errorResponse")
+                            } catch (e: Exception) {
+                                Log.e("TAG", "Error parsing error response: ${e.message}")
+                            }
+                        }
+                        _viewMessage.emit("Error updating product: ${throwable.message}")
                     }
                     .collect{
                     }
-                addedImages.forEach {
-                    productRepo.addImageToProduct(updatedProduct.id, it).catch {
-                        _viewMessage.emit("Error updating Image: ${it.message}")
-                        Log.e("ProductEditViewModel", "Edit Product: ${it.message}")
-                    }.collect{
-
-                    }
-                }
 
                 removedImages.forEach { deletedImageSrc ->
                     val imageId = srcToIdMap[deletedImageSrc]
@@ -89,7 +110,7 @@ class ProductEditViewModel(private val productRepo: ProductRepo, product: Produc
                     .collect { finalProduct ->
                         _productState.value = ResponseStatus.Success(finalProduct)
                         _viewMessage.emit("Product updated: ${finalProduct.title}")
-                        Log.i("ProductEditViewModel", "Final update complete: ${finalProduct}")
+                        Log.i("ProductEditViewModel", "fetch by id: ${finalProduct}")
                     }
 
             } catch (e: Exception) {

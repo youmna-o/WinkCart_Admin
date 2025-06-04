@@ -32,8 +32,8 @@ interface AdminServices {
     @DELETE("products/{product_id}/images/{image_id}.json")
     suspend fun deleteImageFromProduct(@Path("product_id") productId: Long, @Path("image_id") imageId: Long)
 
-
-
+    @DELETE("products/{product_id}/variants/{variant_id}.json")
+    suspend fun deleteProductVariant(@Path("product_id") productId: Long, @Path("variant_id")variantId: Long)
 
 
 }

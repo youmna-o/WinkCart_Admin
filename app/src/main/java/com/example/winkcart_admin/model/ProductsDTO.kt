@@ -31,19 +31,19 @@ data class Product(
 
 @Parcelize
 data class Variant(
-    val id: Long,
-    val product_id: Long,
-    val title: String,
-    val price: String,
-    val position: Int,
-    val inventory_policy: String,
-    val compare_at_price: String?,
-    val option1: String?,
-    val option2: String?,
-    val option3: String?,
-    val sku: String?,
-    val inventory_quantity: Int,
-    val inventory_item_id: Long
+    var id: Long?=0,
+    var product_id: Long,
+    var title: String,
+    var price: String,
+    var position: Int,
+    var inventory_policy: String,
+    var compare_at_price: String?,
+    var option1: String?,
+    var option2: String?,
+    var option3: String?,
+    var sku: String?,
+    var inventory_quantity: Int,
+    var inventory_item_id: Long
 ):Parcelable
 @Parcelize
 data class Option(

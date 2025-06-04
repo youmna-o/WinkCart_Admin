@@ -22,4 +22,5 @@ interface RemoteDataSource {
     suspend fun addImageToProduct(productId: Long, imageURl: String): ImageData
 
     suspend fun deleteImageFromProduct(productId: Long, imageId: Long)
+    suspend fun deleteProductVariant(productId: Long, variantId: Long)
 }
