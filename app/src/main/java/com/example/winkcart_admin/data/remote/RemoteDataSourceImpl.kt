@@ -42,7 +42,6 @@ class RemoteDataSourceImpl(private val adminServices: AdminServices) :RemoteData
     override suspend fun deleteProductVariant(productId: Long, variantId: Long) {
         return adminServices.deleteProductVariant(productId,variantId)
     }
-
     override suspend fun setInventoryLevel(request: InventoryLevelSetRequest) {
         Log.i("TAG", "setInventoryLevel: ${request}")
         return adminServices.setInventoryLevel(request)

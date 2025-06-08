@@ -63,7 +63,13 @@ fun ProductsGrid(products: List<Product>,onProductDeleteAction:(Long)->Unit,onPr
 }
 
 @Composable
-fun AdminAlert(title: String, message: String, confirmMessage:String,onDismissAction: () -> Unit, onConfirmAction: () -> Unit) {
+fun AdminAlert(
+    title: String,
+    message: String,
+    confirmMessage: String,
+    onDismissAction: () -> Unit,
+    onConfirmAction: () -> Unit
+) {
     AlertDialog(
         onDismissRequest = onDismissAction,
         title = {
