@@ -3,6 +3,7 @@ package com.example.winkcart_admin.data.remote
 import com.example.winkcart_admin.model.ImageData
 import com.example.winkcart_admin.model.ImageRequest
 import com.example.winkcart_admin.model.ImageResponse
+import com.example.winkcart_admin.model.InventoryLevelSetRequest
 import com.example.winkcart_admin.model.Product
 import com.example.winkcart_admin.model.SingleProductResponse
 import retrofit2.http.Body
@@ -23,4 +24,5 @@ interface RemoteDataSource {
 
     suspend fun deleteImageFromProduct(productId: Long, imageId: Long)
     suspend fun deleteProductVariant(productId: Long, variantId: Long)
+    suspend fun setInventoryLevel(request: InventoryLevelSetRequest)
 }
