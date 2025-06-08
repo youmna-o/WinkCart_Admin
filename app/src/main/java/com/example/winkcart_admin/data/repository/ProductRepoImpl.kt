@@ -3,11 +3,13 @@ package com.example.winkcart_admin.data.repository
 import com.example.winkcart_admin.data.ResponseStatus
 import com.example.winkcart_admin.data.remote.RemoteDataSource
 import com.example.winkcart_admin.model.ImageData
+import com.example.winkcart_admin.model.InventoryLevelSetRequest
 import com.example.winkcart_admin.model.Product
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 
 class ProductRepoImpl (private val remoteDataSource: RemoteDataSource):ProductRepo{
     override suspend fun getAllProducts(): Flow<MutableList<Product>> = flow {
@@ -52,11 +54,14 @@ class ProductRepoImpl (private val remoteDataSource: RemoteDataSource):ProductRe
     }.flowOn(Dispatchers.IO)
 
     override suspend fun deleteProduct(id: Long) {
-        try {
-            remoteDataSource.deleteProduct(id)
-        }catch (ex:Exception){
-            throw ex
+        withContext(Dispatchers.IO){
+            try {
+                remoteDataSource.deleteProduct(id)
+            }catch (ex:Exception){
+                throw ex
+            }
         }
+
     }
 
     override suspend fun addImageToProduct(productId: Long, imageURl: String): Flow<ImageData> =flow{
@@ -69,11 +74,32 @@ class ProductRepoImpl (private val remoteDataSource: RemoteDataSource):ProductRe
     }.flowOn(Dispatchers.IO)
 
     override suspend fun deleteImageFromProduct(productId: Long, imageId: Long) {
-        try {
-            remoteDataSource.deleteImageFromProduct(productId, imageId)
-        }catch (ex:Exception){
-            throw ex
+        withContext(Dispatchers.IO){
+            try {
+                remoteDataSource.deleteImageFromProduct(productId, imageId)
+            }catch (ex:Exception){
+                throw ex
+            }
         }
+    }
+
+    override suspend fun deleteVariant(productId: Long, variantId: Long) {
+        withContext(Dispatchers.IO){
+            remoteDataSource.deleteProductVariant(productId,variantId)
+        }
+    }
+
+    override suspend fun setInventoryLevel(value: Int, inventoryItemId: Long, locationID: Long) {
+        withContext(Dispatchers.IO){
+            remoteDataSource.setInventoryLevel(
+                request = InventoryLevelSetRequest(
+                    inventory_item_id = inventoryItemId,
+                    available = value,
+                    location_id = locationID
+                )
+            )
+        }
+
     }
 
 }

@@ -2,6 +2,7 @@ package com.example.winkcart_admin.productsScreen.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import com.example.winkcart_admin.Screens
 import com.example.winkcart_admin.data.ResponseStatus
 import com.example.winkcart_admin.model.Product
 import com.example.winkcart_admin.productsScreen.SearchFilter
@@ -12,7 +13,7 @@ fun ProductViewer(
     onSearchQueryChanged: (String) -> Unit,
     onSearchFilterChanged: (SearchFilter) -> Unit,
     onProductDeleteAction: (Long)->Unit,
-    onProductClickAction:(Product)->Unit
+    onProductClickAction:(Product,Screens)->Unit
 ) {
 
     when(productsResult){

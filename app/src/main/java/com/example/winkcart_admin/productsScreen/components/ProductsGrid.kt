@@ -21,10 +21,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.winkcart_admin.Screens
 import com.example.winkcart_admin.model.Product
 
 @Composable
-fun ProductsGrid(products: List<Product>,onProductDeleteAction:(Long)->Unit,onProductClickAction:(Product)->Unit) {
+fun ProductsGrid(products: List<Product>,onProductDeleteAction:(Long)->Unit,onProductClickAction:(Product,Screens)->Unit) {
     var showDialog by remember { mutableStateOf(false) }
     var productIdToBeDeleted by remember { mutableLongStateOf(0L)  }
     LazyVerticalGrid(
@@ -62,7 +63,13 @@ fun ProductsGrid(products: List<Product>,onProductDeleteAction:(Long)->Unit,onPr
 }
 
 @Composable
-fun AdminAlert(title: String, message: String, confirmMessage:String,onDismissAction: () -> Unit, onConfirmAction: () -> Unit) {
+fun AdminAlert(
+    title: String,
+    message: String,
+    confirmMessage: String,
+    onDismissAction: () -> Unit,
+    onConfirmAction: () -> Unit
+) {
     AlertDialog(
         onDismissRequest = onDismissAction,
         title = {

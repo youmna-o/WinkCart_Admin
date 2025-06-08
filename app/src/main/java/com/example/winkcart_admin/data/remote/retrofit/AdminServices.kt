@@ -2,6 +2,7 @@ package com.example.winkcart_admin.data.remote.retrofit
 
 import com.example.winkcart_admin.model.ImageRequest
 import com.example.winkcart_admin.model.ImageResponse
+import com.example.winkcart_admin.model.InventoryLevelSetRequest
 import com.example.winkcart_admin.model.ProductListResponse
 import com.example.winkcart_admin.model.SingleProductResponse
 import retrofit2.http.Body
@@ -32,8 +33,10 @@ interface AdminServices {
     @DELETE("products/{product_id}/images/{image_id}.json")
     suspend fun deleteImageFromProduct(@Path("product_id") productId: Long, @Path("image_id") imageId: Long)
 
+    @DELETE("products/{product_id}/variants/{variant_id}.json")
+    suspend fun deleteProductVariant(@Path("product_id") productId: Long, @Path("variant_id")variantId: Long)
 
-
-
+    @POST("inventory_levels/set.json")
+    suspend fun setInventoryLevel(@Body request: InventoryLevelSetRequest)
 
 }
