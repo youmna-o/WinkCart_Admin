@@ -55,9 +55,9 @@ fun ProductsScreen(navHostController: NavHostController, viewModel: ProductsView
                 onProductDeleteAction = { id ->
                     viewModel.deleteProduct(id)
                 },
-                onProductClickAction = { product ->
+                onProductClickAction = { product,screenToNavigate ->
                     navHostController.currentBackStackEntry?.savedStateHandle?.set("product",product)
-                    navHostController.navigate(Screens.ProductEditSrc)
+                    navHostController.navigate(screenToNavigate)
                 }
             )
             FloatingActionButton(

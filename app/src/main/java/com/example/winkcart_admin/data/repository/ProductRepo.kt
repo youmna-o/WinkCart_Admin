@@ -19,4 +19,7 @@ interface ProductRepo {
 
     suspend fun deleteImageFromProduct(productId: Long, imageId: Long)
     suspend fun deleteVariant(productId: Long, variantId: Long)
+
+    suspend fun setInventoryLevel(value:Int,inventoryItemId:Long,locationID:Long=83257360632)
+
 }
