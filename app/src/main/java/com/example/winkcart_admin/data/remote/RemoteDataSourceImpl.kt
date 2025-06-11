@@ -2,13 +2,16 @@ package com.example.winkcart_admin.data.remote
 
 import android.util.Log
 import com.example.winkcart_admin.data.remote.retrofit.AdminServices
+import com.example.winkcart_admin.model.DiscountCodeRequest
+import com.example.winkcart_admin.model.DiscountCodeResponse
 import com.example.winkcart_admin.model.ImageData
 import com.example.winkcart_admin.model.ImageRequest
-import com.example.winkcart_admin.model.ImageResponse
 import com.example.winkcart_admin.model.InventoryLevelSetRequest
+import com.example.winkcart_admin.model.PriceRule
+import com.example.winkcart_admin.model.PriceRuleRequest
+import com.example.winkcart_admin.model.PriceRulesResponse
 import com.example.winkcart_admin.model.Product
 import com.example.winkcart_admin.model.SingleProductResponse
-import retrofit2.http.Body
 
 class RemoteDataSourceImpl(private val adminServices: AdminServices) :RemoteDataSource{
     override suspend fun getAllProducts(): MutableList<Product> {
@@ -45,6 +48,38 @@ class RemoteDataSourceImpl(private val adminServices: AdminServices) :RemoteData
     override suspend fun setInventoryLevel(request: InventoryLevelSetRequest) {
         Log.i("TAG", "setInventoryLevel: ${request}")
         return adminServices.setInventoryLevel(request)
+    }
+
+    override suspend fun getAllPriceRules(): PriceRulesResponse {
+        return adminServices.getAllPriceRules()
+    }
+
+    override suspend fun getPriceRuleById(ruleId:Long): PriceRuleRequest {
+        return adminServices.getPriceRuleById(ruleId)
+    }
+
+    override suspend fun getDiscountCodesForPriceRule(priceRuleId: Long): DiscountCodeResponse {
+        return adminServices.getDiscountCodesForPriceRule(priceRuleId)
+    }
+
+    override suspend fun createPriceRule(request: PriceRuleRequest): PriceRuleRequest {
+        return adminServices.createPriceRule(request)
+    }
+
+    override suspend fun createDiscountCode(priceRuleId: Long, request: DiscountCodeRequest): DiscountCodeResponse {
+        return adminServices.createDiscountCode(priceRuleId, request)
+    }
+
+    override suspend fun deleteDiscountCode(priceRuleId: Long, discountCodeId: Long) {
+        adminServices.deleteDiscountCode(priceRuleId, discountCodeId)
+    }
+
+    override suspend fun deletePriceRule(priceRuleId: Long) {
+        adminServices.deletePriceRule(priceRuleId)
+    }
+
+    override suspend fun updatePriceRule(request: PriceRuleRequest): PriceRuleRequest {
+        return adminServices.updatePriceRule(request.price_rule.id,request)
     }
 
 

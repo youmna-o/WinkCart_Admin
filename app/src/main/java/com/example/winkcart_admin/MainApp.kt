@@ -24,6 +24,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import com.example.winkcart_admin.CouponsEditScreen.CouponsEditScreen
+import com.example.winkcart_admin.CouponsEditScreen.CouponsEditViewModelFactory
+import com.example.winkcart_admin.CouponsScreen.CouponsScreen
+import com.example.winkcart_admin.CouponsScreen.CouponsViewModelFactory
 import com.example.winkcart_admin.InventoryScreen.InventoryScreen
 import com.example.winkcart_admin.InventoryScreen.InventoryViewModelFactory
 import com.example.winkcart_admin.data.remote.RemoteDataSourceImpl
@@ -57,7 +62,18 @@ fun MainApp() {
             DashboardScreen(navHostController)
         }
         composable<Screens.CouponsScr> {
-            CouponsScreen(navHostController)
+            CouponsScreen(
+                navHostController = navHostController,
+                viewModel = viewModel(
+                    factory = CouponsViewModelFactory(
+                        repository = ProductRepoImpl(
+                            remoteDataSource = RemoteDataSourceImpl(
+                                adminServices = RetrofitHelper.productService
+                            )
+                        )
+                    )
+                )
+            )
         }
         composable<Screens.InventoryScr> {
             val product = navHostController.previousBackStackEntry?.savedStateHandle?.get<Product>("product")
@@ -104,21 +120,30 @@ fun MainApp() {
                 Log.i("TAG", "MainApp: product is null before opening product details")
             }
         }
+        composable<Screens.CouponsEditScr> {navBackStack->
+
+            val data= navBackStack.toRoute<Screens.CouponsEditScr>()
+            CouponsEditScreen(
+                navHostController = navHostController,
+                viewModel = viewModel(
+                    factory = CouponsEditViewModelFactory(
+                        repository = ProductRepoImpl(
+                            remoteDataSource = RemoteDataSourceImpl(
+                                adminServices = RetrofitHelper.productService
+                            )
+                        )
+                    )
+                ),
+                couponId = data.couponId
+            )
+
+
+
+        }
 
     }
 
 
-}
-
-@Composable
-fun CouponsScreen(navHostController: NavHostController) {
-
-    Scaffold(
-        bottomBar = {BottomNavigationBar(navHostController)}
-    ) {padding->
-
-        Text(text = "Coupons Screen", modifier = Modifier.padding(padding))
-    }
 }
 
 @Composable

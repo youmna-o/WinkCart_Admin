@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class Screens {
+
     @Serializable
     data object DashboardScr:Screens()
     @Serializable
@@ -14,5 +15,7 @@ sealed class Screens {
     data object CouponsScr:Screens()
     @Serializable
     data object ProductEditSrc:Screens()
+    @Serializable
+    data class CouponsEditScr(val couponId:Long):Screens()
 
 }

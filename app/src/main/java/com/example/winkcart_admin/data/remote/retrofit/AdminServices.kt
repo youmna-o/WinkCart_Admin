@@ -1,8 +1,13 @@
 package com.example.winkcart_admin.data.remote.retrofit
 
+import com.example.winkcart_admin.model.DiscountCodeRequest
+import com.example.winkcart_admin.model.DiscountCodeResponse
 import com.example.winkcart_admin.model.ImageRequest
 import com.example.winkcart_admin.model.ImageResponse
 import com.example.winkcart_admin.model.InventoryLevelSetRequest
+import com.example.winkcart_admin.model.PriceRule
+import com.example.winkcart_admin.model.PriceRuleRequest
+import com.example.winkcart_admin.model.PriceRulesResponse
 import com.example.winkcart_admin.model.ProductListResponse
 import com.example.winkcart_admin.model.SingleProductResponse
 import retrofit2.http.Body
@@ -38,5 +43,31 @@ interface AdminServices {
 
     @POST("inventory_levels/set.json")
     suspend fun setInventoryLevel(@Body request: InventoryLevelSetRequest)
+
+    @GET("price_rules.json")
+    suspend fun getAllPriceRules(): PriceRulesResponse
+
+    @GET("price_rules/{price_rule_id}.json")
+    suspend fun getPriceRuleById(@Path("price_rule_id") priceRuleId: Long): PriceRuleRequest
+
+    @GET("price_rules/{price_rule_id}/discount_codes.json")
+    suspend fun getDiscountCodesForPriceRule(@Path("price_rule_id") priceRuleId: Long) :DiscountCodeResponse
+
+    @POST("price_rules.json")
+    suspend fun createPriceRule(@Body request: PriceRuleRequest):PriceRuleRequest
+
+    @POST("price_rules/{price_rule_id}/discount_codes.json")
+    suspend fun createDiscountCode( @Path("price_rule_id") priceRuleId: Long,@Body request: DiscountCodeRequest):DiscountCodeResponse
+
+    @DELETE("price_rules/{price_rule_id}/discount_codes/{discount_code_id}.json")
+    suspend fun deleteDiscountCode(@Path("price_rule_id") priceRuleId: Long, @Path("discount_code_id") discountCodeId: Long)
+
+    @DELETE("price_rules/{price_rule_id}.json")
+    suspend fun deletePriceRule(@Path("price_rule_id") priceRuleId: Long)
+
+    @PUT("price_rules/{price_rule_id}.json")
+    suspend fun updatePriceRule(@Path("price_rule_id") priceRuleId: Long, @Body request: PriceRuleRequest):PriceRuleRequest
+
+
 
 }
