@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import com.example.winkcart_admin.R
 
 @Composable
-fun ProductsFailureState(message: String) {
+fun AdminFailureState(message: String) {
 
     Column(
         modifier = Modifier.fillMaxSize(),

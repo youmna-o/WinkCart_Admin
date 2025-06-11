@@ -15,7 +15,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.winkcart_admin.R
 
 @Composable
-fun ProductsLoading() {
+fun AdminLoading() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center

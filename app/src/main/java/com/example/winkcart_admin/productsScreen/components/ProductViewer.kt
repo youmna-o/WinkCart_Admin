@@ -17,10 +17,10 @@ fun ProductViewer(
 ) {
 
     when(productsResult){
-        is ResponseStatus.Error -> ProductsFailureState(
+        is ResponseStatus.Error -> AdminFailureState(
             productsResult.error.message ?: "UnknownError"
         )
-        ResponseStatus.Loading -> ProductsLoading()
+        ResponseStatus.Loading -> AdminLoading()
         is ResponseStatus.Success<*> -> {
             Column {
                 ProductsSearchBar(onSearchQueryChanged,onSearchFilterChanged)
