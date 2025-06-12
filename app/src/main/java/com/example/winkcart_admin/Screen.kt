@@ -17,5 +17,9 @@ sealed class Screens {
     data object ProductEditSrc:Screens()
     @Serializable
     data class CouponsEditScr(val couponId:Long):Screens()
+    @Serializable
+    data object LoginScr:Screens()
+    @Serializable
+    data object AboutUsScr:Screens()
 
 }

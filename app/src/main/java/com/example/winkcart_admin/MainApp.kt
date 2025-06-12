@@ -3,8 +3,9 @@ package com.example.winkcart_admin
 import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Home
+
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
@@ -31,19 +32,24 @@ import com.example.winkcart_admin.CouponsScreen.CouponsScreen
 import com.example.winkcart_admin.CouponsScreen.CouponsViewModelFactory
 import com.example.winkcart_admin.InventoryScreen.InventoryScreen
 import com.example.winkcart_admin.InventoryScreen.InventoryViewModelFactory
+import com.example.winkcart_admin.LoginScreen.LoginScreen
+import com.example.winkcart_admin.LoginScreen.LoginViewModelFactory
+import com.example.winkcart_admin.aboutUsScreen.AboutUsScreen
 import com.example.winkcart_admin.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_admin.data.remote.retrofit.RetrofitHelper
+import com.example.winkcart_admin.data.repository.AuthRepository
 import com.example.winkcart_admin.data.repository.ProductRepoImpl
 import com.example.winkcart_admin.model.Product
 import com.example.winkcart_admin.productEditScreen.ProductEditScreen
 import com.example.winkcart_admin.productEditScreen.ProductEditViewModelFactory
 import com.example.winkcart_admin.productsScreen.ProductsScreen
 import com.example.winkcart_admin.productsScreen.ProductsViewModelFactory
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun MainApp() {
     val navHostController= rememberNavController()
-    NavHost(navController = navHostController, startDestination = Screens.ProductsScr) {
+    NavHost(navController = navHostController, startDestination = Screens.LoginScr) {
         composable<Screens.ProductsScr> {
             ProductsScreen(
                 navHostController = navHostController,
@@ -136,9 +142,17 @@ fun MainApp() {
                 ),
                 couponId = data.couponId
             )
-
-
-
+        }
+        composable<Screens.LoginScr> {
+            LoginScreen(
+                navController = navHostController,
+                viewModel = viewModel(factory = LoginViewModelFactory(
+                    repository = AuthRepository(FirebaseAuth.getInstance())
+                ))
+            )
+        }
+        composable<Screens.AboutUsScr> {
+            AboutUsScreen(navHostController)
         }
 
     }
@@ -163,9 +177,9 @@ fun DashboardScreen(navHostController: NavHostController) {
 fun BottomNavigationBar(navHostController: NavHostController) {
 
     val bottomItems= listOf(
-        Screens.DashboardScr,
         Screens.ProductsScr,
-        Screens.CouponsScr
+        Screens.CouponsScr,
+        Screens.AboutUsScr
     )
     NavigationBar {
         val navBackStackEntry=navHostController.currentBackStackEntryAsState()
@@ -184,9 +198,10 @@ fun BottomNavigationBar(navHostController: NavHostController) {
                 },
                 icon = {
                     Icon(imageVector = when(screen){
-                        is Screens.DashboardScr-> Icons.Default.Home
+                        //is Screens.DashboardScr-> Icons.Default.Home
                         is Screens.CouponsScr -> Icons.Default.MailOutline
                         is Screens.ProductsScr -> Icons.Default.ShoppingCart
+                        is Screens.AboutUsScr ->Icons.Default.Call
                         else->Icons.Default.CheckCircle
                     },
                         contentDescription = screen::class.simpleName
@@ -196,9 +211,10 @@ fun BottomNavigationBar(navHostController: NavHostController) {
                 label = {
                     Text(
                         when (screen) {
-                            is Screens.DashboardScr -> "Dashboard"
+                            //is Screens.DashboardScr -> "Dashboard"
                             is Screens.ProductsScr -> "Products"
                             is Screens.CouponsScr -> "Coupons"
+                            is Screens.AboutUsScr-> "Help"
                             else -> "Other"
                         }
                     )
