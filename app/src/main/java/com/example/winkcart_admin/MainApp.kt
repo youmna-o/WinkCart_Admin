@@ -35,6 +35,7 @@ import com.example.winkcart_admin.InventoryScreen.InventoryViewModelFactory
 import com.example.winkcart_admin.LoginScreen.LoginScreen
 import com.example.winkcart_admin.LoginScreen.LoginViewModelFactory
 import com.example.winkcart_admin.aboutUsScreen.AboutUsScreen
+import com.example.winkcart_admin.aboutUsScreen.AboutUsViewModelFactory
 import com.example.winkcart_admin.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_admin.data.remote.retrofit.RetrofitHelper
 import com.example.winkcart_admin.data.repository.AuthRepository
@@ -49,7 +50,9 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun MainApp() {
     val navHostController= rememberNavController()
-    NavHost(navController = navHostController, startDestination = Screens.LoginScr) {
+    val authRepo=AuthRepository(FirebaseAuth.getInstance())
+
+    NavHost(navController = navHostController, startDestination = if (authRepo.isAdminLoggedIn()) Screens.ProductsScr else Screens.LoginScr) {
         composable<Screens.ProductsScr> {
             ProductsScreen(
                 navHostController = navHostController,
@@ -147,12 +150,12 @@ fun MainApp() {
             LoginScreen(
                 navController = navHostController,
                 viewModel = viewModel(factory = LoginViewModelFactory(
-                    repository = AuthRepository(FirebaseAuth.getInstance())
+                    repository = authRepo
                 ))
             )
         }
         composable<Screens.AboutUsScr> {
-            AboutUsScreen(navHostController)
+            AboutUsScreen(navHostController, viewModel = viewModel(factory = AboutUsViewModelFactory(authRepo)))
         }
 
     }
