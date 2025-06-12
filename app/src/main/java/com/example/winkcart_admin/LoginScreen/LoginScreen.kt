@@ -1,8 +1,7 @@
 package com.example.winkcart_admin.LoginScreen
 
-import android.content.res.Resources.Theme
+import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,9 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.winkcart_admin.Screens
 import com.example.winkcart_admin.data.ResponseStatus
-import com.example.winkcart_admin.ui.theme.Rose10
 import com.example.winkcart_admin.ui.theme.Rose40
-import com.example.winkcart_admin.ui.theme.Rose80
 
 @Composable
 fun LoginScreen(
@@ -44,7 +41,6 @@ fun LoginScreen(
 ) {
     val loginUiState by viewModel.loginUiState.collectAsState()
     val context = LocalContext.current
-
     LaunchedEffect(loginUiState.status) {
         when (val status = loginUiState.status) {
             is ResponseStatus.Success<*> -> {
@@ -54,6 +50,7 @@ fun LoginScreen(
             }
             is ResponseStatus.Error -> {
                 Toast.makeText(context, "Login Failed: ${status.error.message}", Toast.LENGTH_LONG).show()
+                Log.i("TAG", "LoginScreen: ${status.error.message}")
             }
             else -> Unit
         }
@@ -85,7 +82,9 @@ fun LoginScreen(
                 isError = loginUiState.email.isNotEmpty() && !loginUiState.isEmailValid,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
                 leadingIcon = { Icon(Icons.Default.Email, contentDescription = "email",tint = Rose40) },
             )
 
@@ -97,7 +96,9 @@ fun LoginScreen(
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
                 leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "password", tint = Rose40) }
             )
 

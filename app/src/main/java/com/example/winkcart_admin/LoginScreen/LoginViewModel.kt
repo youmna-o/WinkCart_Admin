@@ -1,5 +1,6 @@
 package com.example.winkcart_admin.LoginScreen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -34,13 +35,14 @@ class LoginViewModel (private val authRepository: AuthRepository) : ViewModel() 
             _loginUiState.update { it.copy(status = ResponseStatus.Loading) }
             try {
                 authRepository.login(currentState.email, currentState.password)
-
+                Log.i("TAG", "onLoginClick:called ")
                 _loginUiState.update { it.copy(status = ResponseStatus.Success(Unit))}
             }catch(ex:Exception){
                 _loginUiState.update { it.copy(status = ResponseStatus.Error(ex))}
             }
         }
     }
+
 }
 data class LoginUiState(
     val email: String = "",

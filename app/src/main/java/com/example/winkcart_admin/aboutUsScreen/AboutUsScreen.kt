@@ -15,8 +15,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,11 +29,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.winkcart_admin.R
+import com.example.winkcart_admin.Screens
+import com.example.winkcart_admin.data.repository.AuthRepository
 import com.example.winkcart_admin.ui.theme.BackgroundColor
 import com.example.winkcart_admin.ui.theme.HeaderTextColor
 
 @Composable
-fun AboutUsScreen(navHostController:NavHostController) {
+fun AboutUsScreen(navHostController:NavHostController,viewModel:AboutUsViewModel) {
+    val loggedInState=viewModel.loggedInState.collectAsState()
     Scaffold(
         bottomBar = { BottomNavigationBar(navHostController) }
     ) {padding->
@@ -59,6 +65,12 @@ fun AboutUsScreen(navHostController:NavHostController) {
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Welcome Admin",
+                    fontSize = 16.sp
+                )
+
+
                 Text(
                     text = stringResource(R.string.about_us_st1),
                     fontSize = 16.sp
@@ -93,6 +105,15 @@ fun AboutUsScreen(navHostController:NavHostController) {
                         fontSize = 16.sp,
                         color = HeaderTextColor
                     )
+                }
+                Button(onClick = {
+                    if(loggedInState.value){
+                        viewModel.logOut()
+                    }
+                    navHostController.navigate(Screens.LoginScr)
+                }
+                ) {
+                    Text(text = if (loggedInState.value) "Log Out" else "Log In")
                 }
 
 

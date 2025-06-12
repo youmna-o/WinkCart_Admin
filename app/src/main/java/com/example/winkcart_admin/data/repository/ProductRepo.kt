@@ -33,4 +33,5 @@ interface ProductRepo {
     suspend fun deleteCoupon(priceRuleId: Long)
     suspend fun updatePriceRule(request: PriceRuleRequest,discountCodeRequests: List<DiscountCodeRequest>): PriceRule
     suspend fun deleteDiscountCode(productId: Long, codeId: Long)
+
 }
