@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">WinkCart_Admin</string>
+
+    <string name="about_us">About us</string>
+    <string name="about_us_st1">WinkyCart is a smart shopping app built to simplify your online shopping experience.This is the Admin App.
+                        Using this app,You can make Products, Inventory, and Coupons CRUD</string>
+    <string name="about_us_st2">This app was developed as our graduation project at the Information Technology Institute (ITI).</string>
+    <string name="development_team">Development Team:</string>
+    <string name="team_member1">Arwa Khaled Mohamed</string>
+    <string name="team_member2">Rofaida Sobhy Adwi</string>
+    <string name="team_member3">Mustafa Mahmoud Ahmed</string>
+    <string name="team_member4">Yomna Ashraf Elsayed</string>
 </resources>
