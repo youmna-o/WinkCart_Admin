@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -199,7 +200,14 @@ fun ProductEditScreen(navHostController: NavHostController,viewModel: ProductEdi
                     viewModel.editProduct(finalProduct)
                 }
             }) {
-                Text(if (isNewProduct) "Add Product" else "Modify Product")
+                if(productState is ResponseStatus.Loading){
+                    Log.i("TAG", "ProductEditScreen: loooooooading pridcut edit/create")
+                    CircularProgressIndicator(color = Color.LightGray)
+                }
+                else{
+                    Text(if (isNewProduct) "Add Product" else "Modify Product")
+                }
+
             }
         }
         if (isTitleErrorAlert){
@@ -317,7 +325,9 @@ fun ProductVariantsSection(
         modifiedProduct.variants.forEachIndexed { index, variant ->
             var isWarningDisplayed by remember { mutableStateOf(false) }
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween){
                 Text(text = "Variant ${index + 1}:", modifier = Modifier.padding(4.dp), fontSize = 14.sp)
@@ -347,7 +357,7 @@ fun ProductVariantsSection(
                     },
                     label = { Text("Title") },
                     modifier = Modifier
-                        .padding(8.dp)
+                        .padding(4.dp)
                         .weight(2f),
                     singleLine = true
                 )
@@ -359,7 +369,7 @@ fun ProductVariantsSection(
                     },
                     label = { Text("Price") },
                     modifier = Modifier
-                        .padding(8.dp)
+                        .padding(4.dp)
                         .weight(1f),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -372,7 +382,7 @@ fun ProductVariantsSection(
                     },
                     label = { Text("Quantity") },
                     modifier = Modifier
-                        .padding(8.dp)
+                        .padding(4.dp)
                         .weight(1f),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
