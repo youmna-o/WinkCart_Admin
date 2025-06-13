@@ -203,7 +203,7 @@ fun CouponEditForm(
 
 
         DateTimePickerField(
-            label = "Start Date & Time",
+            label = "Start Date & Time(Default: Now)",
             isoDateTime = formState.startsAt,
             onDateTimeSelected = { iso ->
                 onFieldChange(formState.copy(startsAt = iso))
@@ -213,7 +213,7 @@ fun CouponEditForm(
 
 
         DateTimePickerField(
-            label = "End Date & Time",
+            label = "End Date & Time(Default:1 M later)",
             isoDateTime = formState.endsAt,
             onDateTimeSelected = { iso ->
                 onFieldChange(formState.copy(endsAt = iso))
