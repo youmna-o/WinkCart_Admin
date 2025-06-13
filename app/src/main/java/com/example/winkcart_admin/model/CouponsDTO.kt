@@ -28,7 +28,7 @@ data class PriceRule(
     val allocationMethod: String, // ✅ Required: "across" (even distribution) or "each" (per item)
 
     @SerializedName("value_type")
-    val valueType: String, // ✅ Required: "percentage", "fixed_amount", or "shipping"
+    val valueType: String, // ✅ Required: "percentage", "fixed_amount"
 
     @SerializedName("value")
     val value: String, // ✅ Required: Always negative (e.g., "-10.0" for $10 off or "-20.0" for 20% off)

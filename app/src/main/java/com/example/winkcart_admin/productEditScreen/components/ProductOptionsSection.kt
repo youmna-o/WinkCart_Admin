@@ -91,7 +91,7 @@ fun ProductOptionsSection(
             },
             label = { Text("Option value") },
             modifier = Modifier
-                /*.padding(12.dp)*/,
+                .padding(end = 8.dp),
             trailingIcon = {
                 IconButton(
                     content = {
