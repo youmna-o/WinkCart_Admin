@@ -1,6 +1,6 @@
 package com.example.winkcart_admin.productsScreen
 
-import android.util.Log
+
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -23,10 +23,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import javax.inject.Inject
+
 @HiltViewModel
 class ProductsViewModel @Inject constructor(private val productRepo: ProductRepo) : ViewModel() {
 
     private val _products=MutableStateFlow<ResponseStatus<MutableList<Product>>>(ResponseStatus.Loading)
+    internal val products = _products.asStateFlow()
     private val _searchQuery= MutableStateFlow("")
     private val _selectedFilter= MutableStateFlow(SearchFilter.BY_NAME)
     val filteredProducts: StateFlow<ResponseStatus<List<Product>>> = combine(_searchQuery,_products,_selectedFilter)
@@ -53,9 +55,6 @@ class ProductsViewModel @Inject constructor(private val productRepo: ProductRepo
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ResponseStatus.Loading)
 
-    private val _singleProduct=MutableStateFlow<ResponseStatus<Product>>(ResponseStatus.Loading)
-    val singleProduct=_singleProduct.asStateFlow()
-
 
     private val _viewMessage = MutableSharedFlow<String>()
     val viewMessage = _viewMessage.asSharedFlow()
@@ -69,11 +68,11 @@ class ProductsViewModel @Inject constructor(private val productRepo: ProductRepo
                 .catch {
                     _viewMessage.emit("UnexpectedError:  ${it.message}")
                     _products.value=ResponseStatus.Error(it)
-                    Log.i("Fetch", "fetchProducts: ${it.message}")
+
                 }
                 .collect{
                     _products.value=ResponseStatus.Success(it)
-                    Log.i("Fetch", "fetchProducts: "+it[0])
+
                 }
         }
 
@@ -85,14 +84,13 @@ class ProductsViewModel @Inject constructor(private val productRepo: ProductRepo
             try {
                 productRepo.deleteProduct(id)
                 _viewMessage.emit("Product deleted successfully")
-                Log.i("ProductsViewModel", "deleteProduct: Product $id deleted")
+
                 (_products.value as? ResponseStatus.Success)?.result?.removeIf { it.id == id }
                 val updatedProducts = (_products.value as ResponseStatus.Success).result
                 _products.value=ResponseStatus.Loading
                 _products.value = ResponseStatus.Success(updatedProducts.toMutableList())
             } catch (ex: Exception) {
                 _viewMessage.emit("Error deleting product: ${ex.message}")
-                Log.e("ProductsViewModel", "deleteProduct: ${ex.message}")
             }
         }
     }
