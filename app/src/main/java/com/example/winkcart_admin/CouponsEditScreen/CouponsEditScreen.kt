@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.winkcart_admin.BottomNavigationBar
 import com.example.winkcart_admin.CouponsEditScreen.components.CouponEditForm
@@ -19,7 +20,7 @@ import com.example.winkcart_admin.productsScreen.components.AdminLoading
 @Composable
 fun CouponsEditScreen(
     navHostController: NavHostController,
-    viewModel: CouponsEditViewModel,
+    viewModel: CouponsEditViewModel= hiltViewModel(),
     couponId: Long
 ) {
     val formState by viewModel.formState.collectAsState()

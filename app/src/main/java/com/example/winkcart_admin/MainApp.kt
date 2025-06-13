@@ -17,6 +17,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -27,15 +28,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.winkcart_admin.CouponsEditScreen.CouponsEditScreen
-import com.example.winkcart_admin.CouponsEditScreen.CouponsEditViewModelFactory
 import com.example.winkcart_admin.CouponsScreen.CouponsScreen
-import com.example.winkcart_admin.CouponsScreen.CouponsViewModelFactory
 import com.example.winkcart_admin.InventoryScreen.InventoryScreen
 import com.example.winkcart_admin.InventoryScreen.InventoryViewModelFactory
 import com.example.winkcart_admin.LoginScreen.LoginScreen
-import com.example.winkcart_admin.LoginScreen.LoginViewModelFactory
 import com.example.winkcart_admin.aboutUsScreen.AboutUsScreen
-import com.example.winkcart_admin.aboutUsScreen.AboutUsViewModelFactory
+
 import com.example.winkcart_admin.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_admin.data.remote.retrofit.RetrofitHelper
 import com.example.winkcart_admin.data.repository.AuthRepository
@@ -43,8 +41,8 @@ import com.example.winkcart_admin.data.repository.ProductRepoImpl
 import com.example.winkcart_admin.model.Product
 import com.example.winkcart_admin.productEditScreen.ProductEditScreen
 import com.example.winkcart_admin.productEditScreen.ProductEditViewModelFactory
+/*import com.example.winkcart_admin.productEditScreen.ProductEditViewModelFactory*/
 import com.example.winkcart_admin.productsScreen.ProductsScreen
-import com.example.winkcart_admin.productsScreen.ProductsViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -54,35 +52,15 @@ fun MainApp() {
 
     NavHost(navController = navHostController, startDestination = if (authRepo.isAdminLoggedIn()) Screens.ProductsScr else Screens.LoginScr) {
         composable<Screens.ProductsScr> {
-            ProductsScreen(
-                navHostController = navHostController,
-                viewModel = viewModel(
-                    factory = ProductsViewModelFactory(
-                        repository = ProductRepoImpl(
-                            remoteDataSource = RemoteDataSourceImpl(
-                                adminServices = RetrofitHelper.productService
-                            )
-                        )
-                    )
-                )
-            )
+            ProductsScreen(navHostController = navHostController)
+
         }
         composable<Screens.DashboardScr> { 
             DashboardScreen(navHostController)
         }
         composable<Screens.CouponsScr> {
             CouponsScreen(
-                navHostController = navHostController,
-                viewModel = viewModel(
-                    factory = CouponsViewModelFactory(
-                        repository = ProductRepoImpl(
-                            remoteDataSource = RemoteDataSourceImpl(
-                                adminServices = RetrofitHelper.productService
-                            )
-                        )
-                    )
-                )
-            )
+                navHostController = navHostController)
         }
         composable<Screens.InventoryScr> {
             val product = navHostController.previousBackStackEntry?.savedStateHandle?.get<Product>("product")
@@ -90,7 +68,7 @@ fun MainApp() {
                 InventoryScreen(
                     navHostController = navHostController,
                     viewModel = viewModel(
-                        factory =InventoryViewModelFactory(
+                        factory = InventoryViewModelFactory(
                             repository = ProductRepoImpl(
                                 remoteDataSource = RemoteDataSourceImpl(
                                     adminServices = RetrofitHelper.productService
@@ -134,28 +112,14 @@ fun MainApp() {
             val data= navBackStack.toRoute<Screens.CouponsEditScr>()
             CouponsEditScreen(
                 navHostController = navHostController,
-                viewModel = viewModel(
-                    factory = CouponsEditViewModelFactory(
-                        repository = ProductRepoImpl(
-                            remoteDataSource = RemoteDataSourceImpl(
-                                adminServices = RetrofitHelper.productService
-                            )
-                        )
-                    )
-                ),
                 couponId = data.couponId
             )
         }
         composable<Screens.LoginScr> {
-            LoginScreen(
-                navController = navHostController,
-                viewModel = viewModel(factory = LoginViewModelFactory(
-                    repository = authRepo
-                ))
-            )
+            LoginScreen(navController = navHostController)
         }
         composable<Screens.AboutUsScr> {
-            AboutUsScreen(navHostController, viewModel = viewModel(factory = AboutUsViewModelFactory(authRepo)))
+            AboutUsScreen(navHostController)
         }
 
     }
@@ -173,7 +137,7 @@ fun DashboardScreen(navHostController: NavHostController) {
         Button(onClick = {}) { }
         Text(text = "DashBoard Screen", modifier = Modifier.padding(padding))
     }
-    
+
 }
 
 @Composable

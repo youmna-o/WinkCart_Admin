@@ -28,14 +28,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+
 import com.example.winkcart_admin.R
 import com.example.winkcart_admin.Screens
-import com.example.winkcart_admin.data.repository.AuthRepository
 import com.example.winkcart_admin.ui.theme.BackgroundColor
 import com.example.winkcart_admin.ui.theme.HeaderTextColor
 
 @Composable
-fun AboutUsScreen(navHostController:NavHostController,viewModel:AboutUsViewModel) {
+fun AboutUsScreen(navHostController:NavHostController,viewModel:AboutUsViewModel= hiltViewModel()) {
     val loggedInState=viewModel.loggedInState.collectAsState()
     Scaffold(
         bottomBar = { BottomNavigationBar(navHostController) }

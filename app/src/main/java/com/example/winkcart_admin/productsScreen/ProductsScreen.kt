@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.winkcart_admin.BottomNavigationBar
@@ -28,7 +29,7 @@ import com.example.winkcart_admin.productsScreen.components.ProductViewer
 import kotlinx.coroutines.flow.asStateFlow
 
 @Composable
-fun ProductsScreen(navHostController: NavHostController, viewModel: ProductsViewModel) {
+fun ProductsScreen(navHostController: NavHostController, viewModel: ProductsViewModel= hiltViewModel()) {
 
     val productsResult=viewModel.filteredProducts.collectAsState()
     val navBackStackEntry = navHostController.currentBackStackEntryAsState()
@@ -58,6 +59,7 @@ fun ProductsScreen(navHostController: NavHostController, viewModel: ProductsView
                 onProductClickAction = { product,screenToNavigate ->
                     navHostController.currentBackStackEntry?.savedStateHandle?.set("product",product)
                     navHostController.navigate(screenToNavigate)
+
                 }
             )
             FloatingActionButton(

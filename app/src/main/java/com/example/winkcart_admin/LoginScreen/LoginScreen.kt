@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.winkcart_admin.Screens
 import com.example.winkcart_admin.data.ResponseStatus
@@ -37,7 +38,7 @@ import com.example.winkcart_admin.ui.theme.Rose40
 @Composable
 fun LoginScreen(
     navController: NavHostController,
-    viewModel: LoginViewModel
+    viewModel: LoginViewModel= hiltViewModel()
 ) {
     val loginUiState by viewModel.loginUiState.collectAsState()
     val context = LocalContext.current

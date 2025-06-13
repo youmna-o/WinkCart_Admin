@@ -1,6 +1,7 @@
 package com.example.winkcart_admin.InventoryScreen
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -8,15 +9,15 @@ import com.example.winkcart_admin.data.ResponseStatus
 import com.example.winkcart_admin.data.repository.ProductRepo
 import com.example.winkcart_admin.model.Product
 import com.example.winkcart_admin.productEditScreen.ProductEditViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-
+import javax.inject.Inject
 class InventoryViewModel (private val productRepo: ProductRepo, product: Product) : ViewModel() {
-
 
     private val _productState= MutableStateFlow<ResponseStatus<Product>>(ResponseStatus.Success(product))
     val productState=_productState.asStateFlow()

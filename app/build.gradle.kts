@@ -6,8 +6,9 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.jetbrains.kotlin.serialization)
     alias(libs.plugins.google.services)
-
     id("kotlin-parcelize")
+    id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
 }
 android {
     namespace = "com.example.winkcart_admin"
@@ -92,7 +93,12 @@ dependencies {
 
     //coil
     implementation("io.coil-kt:coil-compose:2.3.0")
-    /*
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    ksp("com.google.dagger:hilt-android-compiler:2.51.1")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+/*
 
        //Scoped API
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose-android:2.8.7")
@@ -136,6 +142,6 @@ dependencies {
     testImplementation ("io.mockk:mockk-android:1.13.17")
     testImplementation ("io.mockk:mockk-agent:1.13.17")
 
+*/
 
-    * */
 }

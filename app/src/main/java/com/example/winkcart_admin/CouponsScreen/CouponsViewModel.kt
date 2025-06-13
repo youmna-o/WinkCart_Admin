@@ -8,6 +8,7 @@ import com.example.winkcart_admin.data.ResponseStatus
 import com.example.winkcart_admin.data.repository.ProductRepo
 import com.example.winkcart_admin.model.CouponsModel
 import com.example.winkcart_admin.model.PriceRule
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,8 +17,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import javax.inject.Inject
 
-class CouponsViewModel(private val productRepo: ProductRepo) : ViewModel() {
+@HiltViewModel
+class CouponsViewModel @Inject constructor(private val productRepo: ProductRepo) : ViewModel() {
 
     private val _couponsState = MutableStateFlow<ResponseStatus<MutableList<CouponsModel>>>(ResponseStatus.Loading)
     val couponsState = _couponsState.asStateFlow()
@@ -61,10 +64,5 @@ class CouponsViewModel(private val productRepo: ProductRepo) : ViewModel() {
                 _couponsState.value= ResponseStatus.Success(couponsList)
             }
         }
-    }
-}
-class CouponsViewModelFactory(private val repository: ProductRepo) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return CouponsViewModel(productRepo = repository) as T
     }
 }
