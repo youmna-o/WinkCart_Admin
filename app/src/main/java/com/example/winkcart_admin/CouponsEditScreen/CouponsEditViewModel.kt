@@ -1,6 +1,5 @@
 package com.example.winkcart_admin.CouponsEditScreen
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -89,7 +88,6 @@ class CouponsEditViewModel @Inject constructor(private val productRepo: ProductR
                 val rule=_formState.value.toPriceRule()
                 val priceRuleRequest=PriceRuleRequest(rule)
                 val newCodes=_formState.value.newDiscountCodes.map { DiscountCodeRequest(discountCode = DiscountCode(code = it)) }
-                Log.i("TAG", "uploadCouponUpdate:before creating/updating ${PriceRuleRequest(rule)}")
                 if (_formState.value.id==0L){
                     returnedRule=productRepo.createCoupon(
                         request = priceRuleRequest,
@@ -104,19 +102,9 @@ class CouponsEditViewModel @Inject constructor(private val productRepo: ProductR
                 }
                 _couponResponse.value=ResponseStatus.Success(returnedRule)
                 _formState.value=returnedRule.toFormState()
-                Log.i("TAG", "uploadCouponUpdate: Successful Coupon create/update")
 
             }catch (ex:Exception){
                 _couponResponse.value=ResponseStatus.Error(ex)
-                if (ex is HttpException) {
-                    try {
-                        val errorResponse = ex.response()?.errorBody()?.string()
-                        Log.e("InventoryViewModel", "Error updating Coupon: $errorResponse")
-                    } catch (e: Exception) {
-                        Log.e("InventoryViewModel", "Error parsing error response: ${e.message}")
-                    }
-                }
-                Log.i("TAG", "uploadCouponUpdate: ${ex}")
             }
 
         }
@@ -124,7 +112,6 @@ class CouponsEditViewModel @Inject constructor(private val productRepo: ProductR
     }
 
     fun isProductIdValid(productId: Long): Boolean {
-        Log.i("TAG", "isProductIdValid: ${productList.firstOrNull{ it.id==productId}!=null}")
         return productList.firstOrNull{ it.id==productId}!=null
     }
 
