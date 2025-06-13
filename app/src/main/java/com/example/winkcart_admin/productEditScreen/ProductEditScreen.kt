@@ -19,6 +19,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -315,11 +316,25 @@ fun ProductVariantsSection(
 
         modifiedProduct.variants.forEachIndexed { index, variant ->
             var isWarningDisplayed by remember { mutableStateOf(false) }
-            Row{
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween){
                 Text(text = "Variant ${index + 1}:", modifier = Modifier.padding(4.dp), fontSize = 14.sp)
                 if(isWarningDisplayed){
                     Text(text="You have to select value For each Option", color = Color.Red, fontSize = 14.sp)
                 }
+                IconButton(onClick = {
+                    val modifiedList=modifiedProduct.variants.toMutableList()
+                    modifiedList.removeAt(index)
+                    onProductChange(modifiedProduct.copy(variants =modifiedList.toList() ))
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "remove Variant"
+                    )
+                }
+
 
             }
 
