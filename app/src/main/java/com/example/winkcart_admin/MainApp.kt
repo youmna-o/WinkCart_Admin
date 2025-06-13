@@ -3,8 +3,9 @@ package com.example.winkcart_admin
 import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Home
+
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
@@ -16,6 +17,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -24,40 +26,41 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import com.example.winkcart_admin.CouponsEditScreen.CouponsEditScreen
+import com.example.winkcart_admin.CouponsScreen.CouponsScreen
 import com.example.winkcart_admin.InventoryScreen.InventoryScreen
 import com.example.winkcart_admin.InventoryScreen.InventoryViewModelFactory
+import com.example.winkcart_admin.LoginScreen.LoginScreen
+import com.example.winkcart_admin.aboutUsScreen.AboutUsScreen
+
 import com.example.winkcart_admin.data.remote.RemoteDataSourceImpl
 import com.example.winkcart_admin.data.remote.retrofit.RetrofitHelper
+import com.example.winkcart_admin.data.repository.AuthRepository
 import com.example.winkcart_admin.data.repository.ProductRepoImpl
 import com.example.winkcart_admin.model.Product
 import com.example.winkcart_admin.productEditScreen.ProductEditScreen
 import com.example.winkcart_admin.productEditScreen.ProductEditViewModelFactory
+/*import com.example.winkcart_admin.productEditScreen.ProductEditViewModelFactory*/
 import com.example.winkcart_admin.productsScreen.ProductsScreen
-import com.example.winkcart_admin.productsScreen.ProductsViewModelFactory
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun MainApp() {
     val navHostController= rememberNavController()
-    NavHost(navController = navHostController, startDestination = Screens.ProductsScr) {
+    val authRepo=AuthRepository(FirebaseAuth.getInstance())
+
+    NavHost(navController = navHostController, startDestination = if (authRepo.isAdminLoggedIn()) Screens.ProductsScr else Screens.LoginScr) {
         composable<Screens.ProductsScr> {
-            ProductsScreen(
-                navHostController = navHostController,
-                viewModel = viewModel(
-                    factory = ProductsViewModelFactory(
-                        repository = ProductRepoImpl(
-                            remoteDataSource = RemoteDataSourceImpl(
-                                adminServices = RetrofitHelper.productService
-                            )
-                        )
-                    )
-                )
-            )
+            ProductsScreen(navHostController = navHostController)
+
         }
         composable<Screens.DashboardScr> { 
             DashboardScreen(navHostController)
         }
         composable<Screens.CouponsScr> {
-            CouponsScreen(navHostController)
+            CouponsScreen(
+                navHostController = navHostController)
         }
         composable<Screens.InventoryScr> {
             val product = navHostController.previousBackStackEntry?.savedStateHandle?.get<Product>("product")
@@ -65,7 +68,7 @@ fun MainApp() {
                 InventoryScreen(
                     navHostController = navHostController,
                     viewModel = viewModel(
-                        factory =InventoryViewModelFactory(
+                        factory = InventoryViewModelFactory(
                             repository = ProductRepoImpl(
                                 remoteDataSource = RemoteDataSourceImpl(
                                     adminServices = RetrofitHelper.productService
@@ -104,21 +107,24 @@ fun MainApp() {
                 Log.i("TAG", "MainApp: product is null before opening product details")
             }
         }
+        composable<Screens.CouponsEditScr> {navBackStack->
+
+            val data= navBackStack.toRoute<Screens.CouponsEditScr>()
+            CouponsEditScreen(
+                navHostController = navHostController,
+                couponId = data.couponId
+            )
+        }
+        composable<Screens.LoginScr> {
+            LoginScreen(navController = navHostController)
+        }
+        composable<Screens.AboutUsScr> {
+            AboutUsScreen(navHostController)
+        }
 
     }
 
 
-}
-
-@Composable
-fun CouponsScreen(navHostController: NavHostController) {
-
-    Scaffold(
-        bottomBar = {BottomNavigationBar(navHostController)}
-    ) {padding->
-
-        Text(text = "Coupons Screen", modifier = Modifier.padding(padding))
-    }
 }
 
 @Composable
@@ -131,16 +137,16 @@ fun DashboardScreen(navHostController: NavHostController) {
         Button(onClick = {}) { }
         Text(text = "DashBoard Screen", modifier = Modifier.padding(padding))
     }
-    
+
 }
 
 @Composable
 fun BottomNavigationBar(navHostController: NavHostController) {
 
     val bottomItems= listOf(
-        Screens.DashboardScr,
         Screens.ProductsScr,
-        Screens.CouponsScr
+        Screens.CouponsScr,
+        Screens.AboutUsScr
     )
     NavigationBar {
         val navBackStackEntry=navHostController.currentBackStackEntryAsState()
@@ -159,9 +165,10 @@ fun BottomNavigationBar(navHostController: NavHostController) {
                 },
                 icon = {
                     Icon(imageVector = when(screen){
-                        is Screens.DashboardScr-> Icons.Default.Home
+                        //is Screens.DashboardScr-> Icons.Default.Home
                         is Screens.CouponsScr -> Icons.Default.MailOutline
                         is Screens.ProductsScr -> Icons.Default.ShoppingCart
+                        is Screens.AboutUsScr ->Icons.Default.Call
                         else->Icons.Default.CheckCircle
                     },
                         contentDescription = screen::class.simpleName
@@ -171,9 +178,10 @@ fun BottomNavigationBar(navHostController: NavHostController) {
                 label = {
                     Text(
                         when (screen) {
-                            is Screens.DashboardScr -> "Dashboard"
+                            //is Screens.DashboardScr -> "Dashboard"
                             is Screens.ProductsScr -> "Products"
                             is Screens.CouponsScr -> "Coupons"
+                            is Screens.AboutUsScr-> "Help"
                             else -> "Other"
                         }
                     )

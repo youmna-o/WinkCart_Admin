@@ -1,9 +1,14 @@
 package com.example.winkcart_admin.data.remote
 
+import com.example.winkcart_admin.model.DiscountCodeRequest
+import com.example.winkcart_admin.model.DiscountCodeResponse
 import com.example.winkcart_admin.model.ImageData
 import com.example.winkcart_admin.model.ImageRequest
 import com.example.winkcart_admin.model.ImageResponse
 import com.example.winkcart_admin.model.InventoryLevelSetRequest
+import com.example.winkcart_admin.model.PriceRule
+import com.example.winkcart_admin.model.PriceRuleRequest
+import com.example.winkcart_admin.model.PriceRulesResponse
 import com.example.winkcart_admin.model.Product
 import com.example.winkcart_admin.model.SingleProductResponse
 import retrofit2.http.Body
@@ -25,4 +30,12 @@ interface RemoteDataSource {
     suspend fun deleteImageFromProduct(productId: Long, imageId: Long)
     suspend fun deleteProductVariant(productId: Long, variantId: Long)
     suspend fun setInventoryLevel(request: InventoryLevelSetRequest)
+    suspend fun getAllPriceRules(): PriceRulesResponse
+    suspend fun getPriceRuleById(ruleId:Long):PriceRuleRequest
+    suspend fun getDiscountCodesForPriceRule(priceRuleId: Long): DiscountCodeResponse
+    suspend fun createPriceRule(request: PriceRuleRequest): PriceRuleRequest
+    suspend fun createDiscountCode(priceRuleId: Long, request: DiscountCodeRequest): DiscountCodeResponse
+    suspend fun deleteDiscountCode(priceRuleId: Long, discountCodeId: Long)
+    suspend fun deletePriceRule(priceRuleId: Long)
+    suspend fun updatePriceRule(request: PriceRuleRequest): PriceRuleRequest
 }

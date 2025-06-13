@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -47,6 +48,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.winkcart_admin.R
 import com.example.winkcart_admin.Screens
@@ -54,6 +56,9 @@ import com.example.winkcart_admin.data.ResponseStatus
 import com.example.winkcart_admin.model.Option
 import com.example.winkcart_admin.model.Product
 import com.example.winkcart_admin.model.Variant
+import com.example.winkcart_admin.productsScreen.components.AdminFailureState
+import com.example.winkcart_admin.productsScreen.components.AdminLoading
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InventoryScreen(
@@ -111,14 +116,12 @@ fun InventoryScreen(
 
             when (productState) {
                 is ResponseStatus.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    AdminLoading()
                 }
 
                 is ResponseStatus.Error -> {
-                    Text(
-                        text = "Error loading product",
-                        color = Color.Red,
-                        modifier = Modifier.align(Alignment.Center)
+                    AdminFailureState(
+                        message = "Error loading product"
                     )
                 }
 
@@ -232,7 +235,7 @@ fun VariantCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            androidx.compose.material3.Button(
+            Button(
                 onClick = {
                     newQuantity?.let { onQuantityChange(it)
                         originalQuantity = it

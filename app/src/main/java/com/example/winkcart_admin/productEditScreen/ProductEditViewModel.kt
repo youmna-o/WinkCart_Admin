@@ -1,12 +1,14 @@
 package com.example.winkcart_admin.productEditScreen
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.winkcart_admin.data.ResponseStatus
 import com.example.winkcart_admin.data.repository.ProductRepo
 import com.example.winkcart_admin.model.Product
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -14,9 +16,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-
+import javax.inject.Inject
 class ProductEditViewModel(private val productRepo: ProductRepo, product: Product) : ViewModel() {
-
 
     private val _productState= MutableStateFlow<ResponseStatus<Product>>(ResponseStatus.Success(product))
     val productState=_productState.asStateFlow()
@@ -119,12 +120,10 @@ class ProductEditViewModel(private val productRepo: ProductRepo, product: Produc
             }
         }
     }
-
-
-
 }
 class ProductEditViewModelFactory(private val repository: ProductRepo,private val product: Product) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return ProductEditViewModel(productRepo = repository,product =product ) as T
     }
 }
+

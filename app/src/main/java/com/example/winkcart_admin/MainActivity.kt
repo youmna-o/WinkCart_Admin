@@ -29,9 +29,11 @@ import com.example.winkcart_admin.data.repository.ProductRepoImpl
 import com.example.winkcart_admin.model.Product
 import com.example.winkcart_admin.productsScreen.ProductsViewModel
 import com.example.winkcart_admin.ui.theme.WinkCart_AdminTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

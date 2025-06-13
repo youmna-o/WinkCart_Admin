@@ -1,86 +1,101 @@
 package com.example.winkcart_admin.data.remote
 
-import android.util.Log
 import com.example.winkcart_admin.data.remote.retrofit.AdminServices
 import com.example.winkcart_admin.model.DiscountCodeRequest
 import com.example.winkcart_admin.model.DiscountCodeResponse
 import com.example.winkcart_admin.model.ImageData
-import com.example.winkcart_admin.model.ImageRequest
 import com.example.winkcart_admin.model.InventoryLevelSetRequest
-import com.example.winkcart_admin.model.PriceRule
 import com.example.winkcart_admin.model.PriceRuleRequest
 import com.example.winkcart_admin.model.PriceRulesResponse
 import com.example.winkcart_admin.model.Product
-import com.example.winkcart_admin.model.SingleProductResponse
 
-class RemoteDataSourceImpl(private val adminServices: AdminServices) :RemoteDataSource{
+class FakeRemoteDataSource(private var productList:List<Product>) :RemoteDataSource{
     override suspend fun getAllProducts(): MutableList<Product> {
-        return adminServices.getProducts().products
+        return productList.toMutableList()
     }
 
-    override suspend fun getProductByID(id:Long): Product {
-        return adminServices.getProductById(id).product
+    override suspend fun getProductByID(id: Long): Product {
+        return productList.find { it.id==id }?: throw NoSuchElementException("No Product Found")
     }
 
     override suspend fun createProduct(product: Product): Product {
-        return adminServices.createProduct(SingleProductResponse(product)).product
+        TODO("Not yet implemented")
     }
 
     override suspend fun updateProduct(id: Long, product: Product): Product {
-        return adminServices.updateProduct(id, SingleProductResponse(product)).product
+        val newList=productList.toMutableList()
+        val isRemoved=newList.removeIf { it.id==id }
+        if (isRemoved){
+            newList.add(product)
+            productList=newList.toList()
+            return product
+        }
+        else{
+            throw NoSuchElementException("No Product Found")
+        }
+
     }
 
     override suspend fun deleteProduct(id: Long) {
-        return adminServices.deleteProduct(id)
+        val newList=productList.toMutableList()
+        val isRemoved=newList.removeIf { it.id==id }
+        if (isRemoved){
+            productList=newList.toList()
+        }else{
+            throw NoSuchElementException("No Product Found")
+
+        }
     }
 
     override suspend fun addImageToProduct(productId: Long, imageURl: String): ImageData {
-        return adminServices.addImageToProduct(productId, ImageRequest(ImageData(imageURl))).image
+        TODO("Not yet implemented")
     }
 
     override suspend fun deleteImageFromProduct(productId: Long, imageId: Long) {
-        return adminServices.deleteImageFromProduct(productId, imageId)
+        TODO("Not yet implemented")
     }
 
     override suspend fun deleteProductVariant(productId: Long, variantId: Long) {
-        return adminServices.deleteProductVariant(productId,variantId)
+        TODO("Not yet implemented")
     }
+
     override suspend fun setInventoryLevel(request: InventoryLevelSetRequest) {
-        Log.i("TAG", "setInventoryLevel: ${request}")
-        return adminServices.setInventoryLevel(request)
+        TODO("Not yet implemented")
     }
 
     override suspend fun getAllPriceRules(): PriceRulesResponse {
-        return adminServices.getAllPriceRules()
+        TODO("Not yet implemented")
     }
 
-    override suspend fun getPriceRuleById(ruleId:Long): PriceRuleRequest {
-        return adminServices.getPriceRuleById(ruleId)
+    override suspend fun getPriceRuleById(ruleId: Long): PriceRuleRequest {
+        TODO("Not yet implemented")
     }
 
     override suspend fun getDiscountCodesForPriceRule(priceRuleId: Long): DiscountCodeResponse {
-        return adminServices.getDiscountCodesForPriceRule(priceRuleId)
+        TODO("Not yet implemented")
     }
 
     override suspend fun createPriceRule(request: PriceRuleRequest): PriceRuleRequest {
-        return adminServices.createPriceRule(request)
+        TODO("Not yet implemented")
     }
 
-    override suspend fun createDiscountCode(priceRuleId: Long, request: DiscountCodeRequest): DiscountCodeResponse {
-        return adminServices.createDiscountCode(priceRuleId, request)
+    override suspend fun createDiscountCode(
+        priceRuleId: Long,
+        request: DiscountCodeRequest
+    ): DiscountCodeResponse {
+        TODO("Not yet implemented")
     }
 
     override suspend fun deleteDiscountCode(priceRuleId: Long, discountCodeId: Long) {
-        adminServices.deleteDiscountCode(priceRuleId, discountCodeId)
+        TODO("Not yet implemented")
     }
 
     override suspend fun deletePriceRule(priceRuleId: Long) {
-        adminServices.deletePriceRule(priceRuleId)
+        TODO("Not yet implemented")
     }
 
     override suspend fun updatePriceRule(request: PriceRuleRequest): PriceRuleRequest {
-        return adminServices.updatePriceRule(request.price_rule.id,request)
+        TODO("Not yet implemented")
     }
-
 
 }

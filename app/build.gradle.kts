@@ -5,7 +5,10 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.jetbrains.kotlin.serialization)
+    alias(libs.plugins.google.services)
     id("kotlin-parcelize")
+    id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
 }
 android {
     namespace = "com.example.winkcart_admin"
@@ -61,6 +64,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.firebase.auth.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -89,7 +93,32 @@ dependencies {
 
     //coil
     implementation("io.coil-kt:coil-compose:2.3.0")
-    /*
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    ksp("com.google.dagger:hilt-android-compiler:2.51.1")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    //testing
+    androidTestImplementation ("androidx.test.ext:junit:1.1.5")
+    testImplementation ("io.mockk:mockk:1.13.8")
+    testImplementation ("androidx.test.ext:junit-ktx:1.1.5")
+    testImplementation ("androidx.test:core-ktx:1.5.0")
+    testImplementation ("org.robolectric:robolectric:4.11.1")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
+
+    testImplementation ( "org.hamcrest:hamcrest:2.2")
+    testImplementation ("org.hamcrest:hamcrest-library:2.2")
+    androidTestImplementation ("org.hamcrest:hamcrest:2.2")
+    androidTestImplementation ("org.hamcrest:hamcrest-library:2.2")
+    // Turbine to test flows
+    testImplementation ("app.cash.turbine:turbine:1.0.0")
+
+
+
+    //mockK
+    testImplementation ("io.mockk:mockk-android:1.13.17")
+    testImplementation ("io.mockk:mockk-agent:1.13.17")
+/*
 
        //Scoped API
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose-android:2.8.7")
@@ -115,24 +144,10 @@ dependencies {
     implementation ("com.github.YarikSOffice:lingver:1.3.0")
 
 
-    //testing
-    androidTestImplementation ("androidx.test.ext:junit:1.1.5")
-    testImplementation ("io.mockk:mockk:1.13.8")
-    testImplementation ("androidx.test.ext:junit-ktx:1.1.5")
-    testImplementation ("androidx.test:core-ktx:1.5.0")
-    testImplementation ("org.robolectric:robolectric:4.11.1")
-    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
-
-    testImplementation ( "org.hamcrest:hamcrest:2.2")
-    testImplementation ("org.hamcrest:hamcrest-library:2.2")
-    androidTestImplementation ("org.hamcrest:hamcrest:2.2")
-    androidTestImplementation ("org.hamcrest:hamcrest-library:2.2")
 
 
-    //MockK
-    testImplementation ("io.mockk:mockk-android:1.13.17")
-    testImplementation ("io.mockk:mockk-agent:1.13.17")
 
+*/
+    testImplementation(kotlin("test"))
 
-    * */
 }
