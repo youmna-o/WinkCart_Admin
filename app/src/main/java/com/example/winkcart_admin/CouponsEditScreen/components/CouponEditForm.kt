@@ -1,5 +1,7 @@
 package com.example.winkcart_admin.CouponsEditScreen.components
 
+import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.winkcart_admin.model.CouponFormState
 
@@ -42,6 +45,7 @@ fun CouponEditForm(
     var newCode by remember { mutableStateOf("") }
     var newProductId by remember { mutableStateOf("") }
     var isProductIdValid by remember { mutableStateOf(true) }
+    var context =LocalContext.current
 
     val allocationMethod = formState.allocationMethod
     val targetSelection = when (allocationMethod) {
@@ -121,7 +125,15 @@ fun CouponEditForm(
         Spacer(Modifier.height(8.dp))
 
         if (targetSelection == "entitled") {
-            Text("Entitled Product IDs", style = MaterialTheme.typography.titleMedium)
+            Row (
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween)
+            {
+                Text("Entitled Product IDs", style = MaterialTheme.typography.titleMedium)
+                if (formState.entitledProductIds.isEmpty()){
+                    Text(text = "Can't Be empty", color = Color.Red)
+                }
+            }
             Spacer(Modifier.height(8.dp))
 
             formState.entitledProductIds.forEach { id ->
@@ -318,7 +330,12 @@ fun CouponEditForm(
 
         Button(
             onClick = {
-                onFinishUpdate()
+                if (formState.entitledProductIds.isEmpty()){
+                    Toast.makeText(context,"product ids cant be empty while target selection entitled ",Toast.LENGTH_SHORT).show()
+                }
+                else{
+                    onFinishUpdate()
+                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
