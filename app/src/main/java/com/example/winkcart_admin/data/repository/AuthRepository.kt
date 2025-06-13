@@ -6,11 +6,12 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class AuthRepository  (
+
+class AuthRepository @Inject constructor (
     private val firebaseAuth: FirebaseAuth,
-
-) {
+    ) {
     suspend fun login(email: String, password: String) = withContext(Dispatchers.IO) {
         firebaseAuth.signInWithEmailAndPassword(email, password).await()
     }

@@ -5,11 +5,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.winkcart_admin.data.repository.AuthRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AboutUsViewModel (private val authRepository: AuthRepository) : ViewModel() {
+@HiltViewModel
+class AboutUsViewModel @Inject constructor(private val authRepository: AuthRepository) : ViewModel() {
 
     private val _loggedInState = MutableStateFlow(false)
     val loggedInState=_loggedInState.asStateFlow()
@@ -31,8 +34,9 @@ class AboutUsViewModel (private val authRepository: AuthRepository) : ViewModel(
 
 
 }
+/*
 class AboutUsViewModelFactory(private val repository: AuthRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AboutUsViewModel(authRepository = repository) as T
     }
-}
+}*/

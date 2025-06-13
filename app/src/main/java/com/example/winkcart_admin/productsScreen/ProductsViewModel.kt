@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.winkcart_admin.data.ResponseStatus
 import com.example.winkcart_admin.data.repository.ProductRepo
 import com.example.winkcart_admin.model.Product
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,8 +22,9 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
-
-class ProductsViewModel(private val productRepo: ProductRepo) : ViewModel() {
+import javax.inject.Inject
+@HiltViewModel
+class ProductsViewModel @Inject constructor(private val productRepo: ProductRepo) : ViewModel() {
 
     private val _products=MutableStateFlow<ResponseStatus<MutableList<Product>>>(ResponseStatus.Loading)
     private val _searchQuery= MutableStateFlow("")
@@ -104,11 +106,7 @@ class ProductsViewModel(private val productRepo: ProductRepo) : ViewModel() {
         _searchQuery.value=""
     }
 }
-class ProductsViewModelFactory(private val repository: ProductRepo) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ProductsViewModel(productRepo = repository) as T
-    }
-}
+
 enum class SearchFilter {
     BY_NAME, BY_ID
 }

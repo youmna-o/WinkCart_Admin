@@ -15,13 +15,16 @@ import com.example.winkcart_admin.model.PriceRuleRequest
 import com.example.winkcart_admin.model.Product
 import com.example.winkcart_admin.model.toFormState
 import com.example.winkcart_admin.model.toPriceRule
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import javax.inject.Inject
 
-class CouponsEditViewModel(private val productRepo: ProductRepo) : ViewModel() {
+@HiltViewModel
+class CouponsEditViewModel @Inject constructor(private val productRepo: ProductRepo) : ViewModel() {
 
 
     private val _formState = MutableStateFlow(CouponFormState())
@@ -134,11 +137,6 @@ class CouponsEditViewModel(private val productRepo: ProductRepo) : ViewModel() {
 }
 
 
-class CouponsEditViewModelFactory(private val repository: ProductRepo) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return CouponsEditViewModel(productRepo = repository) as T
-    }
-}
 
 
 

@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.winkcart_admin.BottomNavigationBar
 import com.example.winkcart_admin.CouponsScreen.components.CouponCard
@@ -32,9 +33,9 @@ import com.example.winkcart_admin.productsScreen.components.AdminFailureState
 import com.example.winkcart_admin.productsScreen.components.AdminLoading
 
 @Composable
-fun CouponsScreen(
+fun CouponsScreen (
     navHostController: NavHostController,
-    viewModel: CouponsViewModel
+    viewModel: CouponsViewModel= hiltViewModel()
 ) {
     val state by viewModel.couponsState.collectAsState()
     var showDeleteAlert by remember { mutableStateOf(false) }
