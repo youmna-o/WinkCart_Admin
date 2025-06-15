@@ -21,5 +21,7 @@ sealed class Screens {
     data object LoginScr:Screens()
     @Serializable
     data object AboutUsScr:Screens()
+    @Serializable
+    data object ProfileScr:Screens()
 
 }
