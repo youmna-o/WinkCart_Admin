@@ -51,7 +51,7 @@ fun MainApp() {
     val navHostController= rememberNavController()
     val authRepo=AuthRepository(FirebaseAuth.getInstance())
 
-   /* NetworkAwareWrapper {*/
+    NetworkAwareWrapper {
         NavHost(
             navController = navHostController,
             startDestination = if (authRepo.isAdminLoggedIn()) Screens.ProductsScr else Screens.LoginScr
@@ -132,7 +132,7 @@ fun MainApp() {
             }
 
         }
-    /*}*/
+    }
 
 }
 
