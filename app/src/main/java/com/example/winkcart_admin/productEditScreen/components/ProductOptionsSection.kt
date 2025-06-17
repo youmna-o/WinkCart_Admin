@@ -1,14 +1,11 @@
 package com.example.winkcart_admin.productEditScreen.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -67,16 +64,10 @@ fun ProductOptionsSection(
         singleLine = true,
         enabled = isOptionFieldEnabled()
     )
-    Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly){
-        productOptionsMap.keys.toList().forEach { optionName ->
-            TitledCard(
-                title = optionName,
-                onDeleteOptionAction = { onDeleteOptionAction(optionName) }
-            )
-
-        }
-    }
-
+    DeletableStringCards(
+        productOptionsMap.keys.toList(),
+        onDeleteOptionAction = { onDeleteOptionAction(it) },
+    )
     Row(
         modifier = Modifier
             .padding(12.dp)
@@ -139,15 +130,9 @@ fun ProductOptionsSection(
             }
         }
     }
-    Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly){
-        productOptionsMap[selectedOption]?.forEach { optionValue ->
-            TitledCard(
-                title = optionValue,
-                onDeleteOptionAction = { onDeleteValueToOptionAction(optionValue,selectedOption) }
-            )
-        }
-    }
-
-
+    DeletableStringCards(
+        stringList = productOptionsMap[selectedOption]?.toList() ?: listOf() ,
+        onDeleteOptionAction = { onDeleteValueToOptionAction(optionValue,selectedOption) }
+    )
 }
 
