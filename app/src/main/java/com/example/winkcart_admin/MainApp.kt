@@ -43,6 +43,7 @@ import com.example.winkcart_admin.productEditScreen.ProductEditScreen
 import com.example.winkcart_admin.productEditScreen.ProductEditViewModelFactory
 /*import com.example.winkcart_admin.productEditScreen.ProductEditViewModelFactory*/
 import com.example.winkcart_admin.productsScreen.ProductsScreen
+import com.example.winkcart_admin.utils.NetworkAwareWrapper
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -50,83 +51,88 @@ fun MainApp() {
     val navHostController= rememberNavController()
     val authRepo=AuthRepository(FirebaseAuth.getInstance())
 
-    NavHost(navController = navHostController, startDestination = if (authRepo.isAdminLoggedIn()) Screens.ProductsScr else Screens.LoginScr) {
-        composable<Screens.ProductsScr> {
-            ProductsScreen(navHostController = navHostController)
+   /* NetworkAwareWrapper {*/
+        NavHost(
+            navController = navHostController,
+            startDestination = if (authRepo.isAdminLoggedIn()) Screens.ProductsScr else Screens.LoginScr
+        ) {
+            composable<Screens.ProductsScr> {
+                ProductsScreen(navHostController = navHostController)
 
-        }
-        composable<Screens.DashboardScr> { 
-            DashboardScreen(navHostController)
-        }
-        composable<Screens.CouponsScr> {
-            CouponsScreen(
-                navHostController = navHostController)
-        }
-        composable<Screens.InventoryScr> {
-            val product = navHostController.previousBackStackEntry?.savedStateHandle?.get<Product>("product")
-            if (product != null) {
-                InventoryScreen(
+            }
+            composable<Screens.DashboardScr> {
+                DashboardScreen(navHostController)
+            }
+            composable<Screens.CouponsScr> {
+                CouponsScreen(
+                    navHostController = navHostController
+                )
+            }
+            composable<Screens.InventoryScr> {
+                val product =
+                    navHostController.previousBackStackEntry?.savedStateHandle?.get<Product>("product")
+                if (product != null) {
+                    InventoryScreen(
+                        navHostController = navHostController,
+                        viewModel = viewModel(
+                            factory = InventoryViewModelFactory(
+                                repository = ProductRepoImpl(
+                                    remoteDataSource = RemoteDataSourceImpl(
+                                        adminServices = RetrofitHelper.productService
+                                    )
+                                ),
+                                product = product
+                            )
+                        )
+                    )
+                } else {
+                    Log.i("TAG", "MainApp: product is null before opening product Inventory")
+                }
+
+
+            }
+            composable<Screens.ProductEditSrc> {
+                val product =
+                    navHostController.previousBackStackEntry?.savedStateHandle?.get<Product>("product")
+
+                if (product != null) {
+                    ProductEditScreen(
+                        navHostController,
+                        viewModel = viewModel(
+                            factory = ProductEditViewModelFactory(
+                                repository = ProductRepoImpl(
+                                    remoteDataSource = RemoteDataSourceImpl(
+                                        adminServices = RetrofitHelper.productService
+                                    )
+                                ),
+                                product = product
+                            )
+                        )
+                    )
+                } else {
+                    Log.i("TAG", "MainApp: product is null before opening product details")
+                }
+            }
+            composable<Screens.CouponsEditScr> { navBackStack ->
+
+                val data = navBackStack.toRoute<Screens.CouponsEditScr>()
+                CouponsEditScreen(
                     navHostController = navHostController,
-                    viewModel = viewModel(
-                        factory = InventoryViewModelFactory(
-                            repository = ProductRepoImpl(
-                                remoteDataSource = RemoteDataSourceImpl(
-                                    adminServices = RetrofitHelper.productService
-                                )
-                            ),
-                            product = product
-                        )
-                    )
+                    couponId = data.couponId
                 )
             }
-            else{
-                Log.i("TAG", "MainApp: product is null before opening product Inventory")
+            composable<Screens.LoginScr> {
+                LoginScreen(navController = navHostController)
+            }
+            composable<Screens.AboutUsScr> {
+                AboutUsScreen()
+            }
+            composable<Screens.ProfileScr> {
+                ProfileScreen(navHostController)
             }
 
-
         }
-        composable<Screens.ProductEditSrc> {
-            val product = navHostController.previousBackStackEntry?.savedStateHandle?.get<Product>("product")
-
-            if (product != null) {
-                ProductEditScreen(
-                    navHostController,
-                    viewModel = viewModel(
-                        factory = ProductEditViewModelFactory(
-                            repository = ProductRepoImpl(
-                                remoteDataSource = RemoteDataSourceImpl(
-                                    adminServices = RetrofitHelper.productService
-                                )
-                            ),
-                            product = product
-                        )
-                    )
-                )
-            }
-            else{
-                Log.i("TAG", "MainApp: product is null before opening product details")
-            }
-        }
-        composable<Screens.CouponsEditScr> {navBackStack->
-
-            val data= navBackStack.toRoute<Screens.CouponsEditScr>()
-            CouponsEditScreen(
-                navHostController = navHostController,
-                couponId = data.couponId
-            )
-        }
-        composable<Screens.LoginScr> {
-            LoginScreen(navController = navHostController)
-        }
-        composable<Screens.AboutUsScr> {
-            AboutUsScreen()
-        }
-        composable<Screens.ProfileScr> {
-            ProfileScreen(navHostController)
-        }
-
-    }
-
+    /*}*/
 
 }
 

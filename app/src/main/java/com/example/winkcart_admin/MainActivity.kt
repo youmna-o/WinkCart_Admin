@@ -39,11 +39,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        /*val viewModel=ProductsViewModel(ProductRepoImpl(
-            remoteDataSource = RemoteDataSourceImpl(RetrofitHelper.productService)
-        ))*/
-        //testCRUDOperations(viewModel)
-
         setContent {
             WinkCart_AdminTheme {
                 MainApp()
@@ -53,86 +48,5 @@ class MainActivity : ComponentActivity() {
 
 
 
-    //test function that should be deleted .
-    //it was created to test the CRUD methods of Product
-    //each operation should be done alone since we are not keeping the data
-    private fun testCRUDOperations(viewModel: ProductsViewModel) {
-        // Create a Product (mock data)
-        val newProduct = Product(
-            id = 0, // ID will be generated after creating
-            title = "Test Product",
-            body_html = "This is a test product",
-            vendor = "Test Vendor",
-            product_type = "Test Type",
-            created_at = "2023-05-28T00:00:00Z",
-            handle = "test-product",
-            updated_at = "2023-05-28T00:00:00Z",
-            published_at = "2023-05-28T00:00:00Z",
-            tags = "test,product",
-            status = "active",
-            variants = listOf(),
-            options = listOf(),
-            images = listOf()
-        )
-
-        lifecycleScope.launch {
-            //create then update
-            /*viewModel.createProduct(newProduct)
-            viewModel.productState.collect { result ->
-                when (result) {
-                    is ResponseStatus.Loading -> {
-                        Log.d("MainActivity", "Creating product...")
-                    }
-                    is ResponseStatus.Success -> {
-                        val createdProduct = result.result
-                        Log.d("MainActivity", "Product created: ${createdProduct.title}")
-
-                        // Step 2: Update the product
-                        val updatedProduct = createdProduct.copy(
-                            title = "Updated Test Product",
-                            vendor = "Updated Test Vendor"
-                        )
-                        Log.i("TAG", "testCRUDOperations: tesssssssssst")
-                        viewModel.updateProduct(createdProduct.id, updatedProduct)
-                    }
-                    is ResponseStatus.Error -> {
-                        Log.e("MainActivity", "Error creating product: ${result.error.message}")
-                    }
-                }
-            }*/
-
-            //update image URL
-            /*val imageUrl = "https://cdn.shopify.com/s/files/1/0758/1132/4152/files/product_29_image1.jpg?v=1748153929"
-            viewModel.addImageToProduct(9085607608568, imageUrl)*/
-
-
-
-            //deleting image from product
-            /*
-            viewModel.getProductById(9085607608568)
-            viewModel.productState.collect { result ->
-                when (result) {
-                    is ResponseStatus.Loading -> {
-                        Log.d("MainActivity", "Got product...")
-                    }
-                    is ResponseStatus.Success -> {
-                        val gotProduct = result.result
-                        Log.d("MainActivity", "Product Got: ${gotProduct.title}")
-                        val imageId = gotProduct.images?.first()?.id
-                        if (imageId != null) {
-                            viewModel.deleteImageFromProduct(gotProduct.id, imageId)
-                        }
-                    }
-                    is ResponseStatus.Error -> {
-                        Log.e("MainActivity", "Error creating product: ${result.error.message}")
-                    }
-                }
-            }*/
-
-            //deleting a product
-            //viewModel.deleteProduct(9085607608568)
-
-        }
-    }
 }
 
