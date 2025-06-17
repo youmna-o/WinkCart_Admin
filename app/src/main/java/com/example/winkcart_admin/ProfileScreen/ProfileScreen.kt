@@ -66,10 +66,10 @@ fun ProfileScreen(navHostController: NavHostController, viewModel: ProfileViewMo
                 Spacer(modifier = Modifier.height(48.dp))
 
                 Image(
-                    painter = painterResource(R.drawable.product_placeholder),
+                    painter = painterResource(R.drawable.app_icon),
                     contentDescription = "app Icon",
                     modifier = Modifier
-                        .size(150.dp)
+                        .size(250.dp)
                         .clip(RoundedCornerShape(16.dp))
                 )
 
