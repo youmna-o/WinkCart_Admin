@@ -7,6 +7,7 @@ import com.example.winkcart_admin.BottomNavigationBar
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.Alignment
@@ -43,7 +44,6 @@ import com.example.winkcart_admin.R
 import com.example.winkcart_admin.Screens
 import com.example.winkcart_admin.ui.theme.BackgroundColor
 import com.example.winkcart_admin.ui.theme.HeaderTextColor
-
 @Composable
 fun ProfileScreen(navHostController: NavHostController, viewModel: ProfileViewModel = hiltViewModel()) {
     val loggedInState = viewModel.loggedInState.collectAsState()
@@ -51,61 +51,49 @@ fun ProfileScreen(navHostController: NavHostController, viewModel: ProfileViewMo
     Scaffold(
         bottomBar = { BottomNavigationBar(navHostController) }
     ) { padding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(BackgroundColor)
-                .padding(padding)
-        ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Spacer(modifier = Modifier.height(48.dp))
-
                 Image(
                     painter = painterResource(R.drawable.app_icon),
                     contentDescription = "app Icon",
                     modifier = Modifier
                         .size(250.dp)
-                        .clip(RoundedCornerShape(16.dp))
                 )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
                 Text(
                     text = "Welcome Admin",
                     fontSize = 24.sp
                 )
-
-                Button(
+                SettingsCard(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
+                        .padding(12.dp)
+                        .align(Alignment.CenterHorizontally),
+                    settingIcon = R.drawable.logout,
+                    settingName = if (loggedInState.value) "Log Out" else "Log In",
                     onClick = {
                         if (loggedInState.value) {
                             viewModel.logOut()
                         }
                         navHostController.navigate(Screens.LoginScr)
                     }
-                ) {
-                    Text(text = if (loggedInState.value) "Log Out" else "Log In")
-                }
+                )
+                SettingsCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp)
+                        .align(Alignment.CenterHorizontally),
+                    settingIcon = R.drawable.about_us,
+                    settingName = "About Us",
+                    onClick = {
+                        navHostController.navigate(Screens.AboutUsScr)
+                    }
+                )
             }
-
-            SettingsCard(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp),
-                settingIcon = R.drawable.about_us,
-                settingName = "About Us",
-                onClick = {
-                    navHostController.navigate(Screens.AboutUsScr)
-                }
-            )
-        }
     }
 }
 
@@ -137,7 +125,7 @@ fun SettingsCard(
             Image(
                 painter = painterResource(settingIcon),
                 contentDescription = settingName,
-                modifier = Modifier.size(50.dp)
+                modifier = Modifier.size(30.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
@@ -150,4 +138,3 @@ fun SettingsCard(
         }
     }
 }
-
