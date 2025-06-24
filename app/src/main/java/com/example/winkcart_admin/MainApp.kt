@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.CheckCircle
 
 import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -177,7 +178,7 @@ fun BottomNavigationBar(navHostController: NavHostController) {
                         //is Screens.DashboardScr-> Icons.Default.Home
                         is Screens.CouponsScr -> Icons.Default.MailOutline
                         is Screens.ProductsScr -> Icons.Default.ShoppingCart
-                        is Screens.ProfileScr ->Icons.Default.AccountCircle
+                        is Screens.ProfileScr ->Icons.Default.MoreHoriz
                         else->Icons.Default.CheckCircle
                     },
                         contentDescription = screen::class.simpleName
@@ -190,7 +191,7 @@ fun BottomNavigationBar(navHostController: NavHostController) {
                             //is Screens.DashboardScr -> "Dashboard"
                             is Screens.ProductsScr -> "Products"
                             is Screens.CouponsScr -> "Coupons"
-                            is Screens.ProfileScr-> "Profile"
+                            is Screens.ProfileScr-> "More"
                             else -> "Other"
                         }
                     )
