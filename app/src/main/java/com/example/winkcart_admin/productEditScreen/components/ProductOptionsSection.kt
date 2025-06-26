@@ -132,7 +132,7 @@ fun ProductOptionsSection(
     }
     DeletableStringCards(
         stringList = productOptionsMap[selectedOption]?.toList() ?: listOf() ,
-        onDeleteOptionAction = { onDeleteValueToOptionAction(optionValue,selectedOption) }
+        onDeleteOptionAction = {toBeDeletedValue-> onDeleteValueToOptionAction(toBeDeletedValue,selectedOption) }
     )
 }
 
