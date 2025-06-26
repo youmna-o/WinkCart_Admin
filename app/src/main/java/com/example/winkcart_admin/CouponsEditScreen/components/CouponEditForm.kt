@@ -330,7 +330,7 @@ fun CouponEditForm(
 
         Button(
             onClick = {
-                if (formState.entitledProductIds.isEmpty()){
+                if (formState.entitledProductIds.isEmpty() && formState.targetSelection=="entitled"){
                     Toast.makeText(context,"product ids cant be empty while target selection entitled ",Toast.LENGTH_SHORT).show()
                 }
                 else{
